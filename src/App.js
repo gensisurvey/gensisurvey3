@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-import MultipleChoiceSlide from "./Slides/MultipleChoiceSlide.js";
-import LikertScaleSlide from "./Slides/LikertSlide.js";
+// import MultipleChoiceSlide from "./Slides/MultipleChoiceSlide.js";
+// import LikertScaleSlide from "./Slides/LikertSlide.js";
 import NodeInputSlide from "./Slides/NodeInputSlide.js";
 import NodeConnectionSlide from "./Slides/NodeSelectionSlide.js";
 import NodeConnect1Slide from "./Slides/NodeConnect1Slide.js";
@@ -90,17 +90,10 @@ const App = () => {
       setSelectionData([...selectionData, currentSelection]);
       console.log([...selectionData, currentSelection]);
     }
-
-    console.log(slideIndex, total_slides, slideIndex === total_slides);
-    if (slideIndex === total_slides) {
-      console.log("proc");
-      add_to_firebase();
-    }
   };
 
   const updateCurrentSelection = (option) => {
     setCurrentSelection(option);
-    // console.log(option)
   };
 
   const handleNextSlide = () => {
@@ -130,36 +123,9 @@ const App = () => {
     }
   };
 
-  // const concatAll = () => {
-  //   const no_dup = [...new Set(selectionData[0].concat(
-  //     selectionData[1],
-  //     selectionData[2],
-  //     selectionData[3],
-  //     selectionData[4],
-  //     selectionData[5]
-  //   ))]
-
-  //   setSelectionData([...selectionData, no_dup]);
-  //   return no_dup
-  // }
-
   return (
     <div>
       <Banner logo={BannerImg} text={"Cornell University"} />
-      {/* <NodeConnectionSlide
-              nodeNames = {['0', '1', '2', '3', '4', '5']}
-              updateCurrentSelection={updateCurrentSelection}
-              nextBlocked = {nextBlocked}
-
-              
-            /> */}
-      {/* <NodeConnect1Slide
-      promptText={"These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."}
-      promptText2={"Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"}
-        nodeNames={["0", "1", "2", "3", "4", "5"]}
-        updateCurrentSelection={updateCurrentSelection}
-        nextBlocked={nextBlocked}
-      /> */}
       {slideIndex < total_slides ? (
         <>
           {/* =====================================================
@@ -341,13 +307,16 @@ const App = () => {
               id="survey_feedback"
             />
           )}
+          <NextSlideButton nextBlocked={nextBlocked} onClick={handleNextSlide} />
+
         </>
+        
       ) : (
         <>
-          <p style={{ marginTop: 100 }}>
-            All slides have been completed. Please hit next slide one more time
-            to submit your survey
+          <p style={{ marginTop: 100, marginLeft: 30 }}>
+            All slides have been completed.
           </p>
+          <button style={{marginLeft: 30 }} onClick={add_to_firebase}>Click this button to submit</button>
           {/* <div>
             <h2>Selection Data:</h2>
             <ul>
@@ -358,12 +327,27 @@ const App = () => {
           </div> */}
         </>
       )}
-      <NextSlideButton nextBlocked={nextBlocked} onClick={handleNextSlide} />
     </div>
   );
 };
 
 export default App;
+
+
+/* <NodeConnectionSlide
+              nodeNames = {['0', '1', '2', '3', '4', '5']}
+              updateCurrentSelection={updateCurrentSelection}
+              nextBlocked = {nextBlocked}
+
+              
+            /> */
+      /* <NodeConnect1Slide
+      promptText={"These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."}
+      promptText2={"Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"}
+        nodeNames={["0", "1", "2", "3", "4", "5"]}
+        updateCurrentSelection={updateCurrentSelection}
+        nextBlocked={nextBlocked}
+      /> */
 
 // {slideIndex === 0 && (
 //   <MultipleChoiceSlide
