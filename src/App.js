@@ -18,6 +18,7 @@ const App = () => {
   const [currentSelection, setCurrentSelection] = useState(null);
   const [slideIndex, setSlideIndex] = useState(0);
   const [nextBlocked, setNextBlocked] = useState(false);
+  const [submittedToFirebase, setSubmittedToFirebase] = useState(false)
 
   const add_to_firebase = async (e) => {
     console.log({
@@ -60,6 +61,7 @@ const App = () => {
         survey_feedback: selectionData[14],
       });
       console.log("Document written with ID: ", docRef.id);
+      setSubmittedToFirebase(true)
     } catch (error) {
       console.error("Error adding document: ", error);
     }
@@ -316,7 +318,11 @@ const App = () => {
           <p style={{ marginTop: 100, marginLeft: 30 }}>
             All slides have been completed.
           </p>
-          <button style={{marginLeft: 30 }} onClick={add_to_firebase}>Click this button to submit</button>
+          {submittedToFirebase ? 
+          
+            <p style={{marginLeft: 30 }}>Thank you, you can close the tab now</p> :
+            <button style={{marginLeft: 30 }} onClick={add_to_firebase}>Click this button to submit</button>
+          }
           {/* <div>
             <h2>Selection Data:</h2>
             <ul>
