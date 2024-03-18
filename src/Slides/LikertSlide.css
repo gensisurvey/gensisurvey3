@@ -1,0 +1,43 @@
+.likert-scale-slide {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0px 20px;
+}
+
+.first-likert {
+  padding: 75px 20px 0px 20px;
+}
+
+.likert-scale-question {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.likert-scale-options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.likert-option {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.likert-option:hover {
+  background-color: #f0f0f0;
+}
+
+.selected-option {
+  margin-top: 10px;
+}
+
+.likert-option.selected {
+  background-color: #333; /* Change to a darker color when selected */
+  color: #fff; /* Change text color to white when selected */
+}

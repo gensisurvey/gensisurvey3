@@ -1,0 +1,46 @@
+.node-box {
+  position: relative;
+  max-width: 600px;
+  max-height: 600px;
+  height: 400px;
+  margin: 0 auto;
+  /* padding: 20px 20px; */
+  background-color: aquamarine;
+  justify-content: "center";
+  align-items: "center";
+  border-radius: 3%;
+  /* border-width: 10px; */
+  border: 5px solid black; /* Border with 2px width, solid style, and black color */
+  margin-top: 10px;
+  /* padding: 10px; */
+}
+.svg {
+  width: 100%; /* Make the SVG element fill the container */
+  height: 100%; /* Make the SVG element fill the container */
+  overflow: hidden; /* Hide overflow content */
+}
+
+.input-header {
+  position: relative;
+  margin-top: 30px;
+  white-space: pre-wrap;
+  margin-left: 10px;
+  font-weight: 300;
+
+}
+.input-header-2 {
+  position: relative;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  white-space: pre-wrap;
+  margin-left: 10px;
+  font-weight: 300;
+
+}
+
+
+.text-wrapper {
+  position: relative;
+  margin-top: 20px;
+  padding: 20px
+}

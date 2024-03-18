@@ -1,0 +1,31 @@
+/* Banner.css */
+.banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #007bff; /* Blue background color */
+    color: #fff; /* White text color */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    margin-bottom: auto;
+    box-sizing: border-box;
+    z-index: 1000;
+  }
+  
+  .logo-container {
+    flex: 0 0 auto;
+  }
+  
+  .logo {
+    height: 40px; /* Adjust height as needed */
+    width: auto; /* Maintain aspect ratio */
+  }
+  
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
