@@ -1,0 +1,104 @@
+.ladder-box {
+  position: relative;
+  justify-content: center;
+
+  margin: 90px;
+  margin-right: 5%;
+  margin-left: 5%;
+
+  max-width: 90%;
+
+  padding: 25px;
+  padding-top: 15px;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  /* @media all and (min-width: 900px) {
+    max-width: 1000em;
+  } */
+}
+
+.ladder-text-wrapper {
+  position: relative;
+  padding: 0 10px 10px 20px;
+  text-align: center;
+}
+
+.ladder-h1 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.ladder-h2 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.ladder-h3 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.mini-ladder-wrapper {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next row */
+  gap: 10px; /* Adjust the gap between items as needed */
+  justify-content: center;
+}
+
+.ladder-mini-box {
+  /* position: flex;
+  justify-content: center; */
+
+  margin: 10px 10px 10px 10px;
+  /* margin-right: 5%;
+  margin-left: 5%;  */
+
+  width: 200px;
+  /* max-width: 23%; */
+
+  padding: 25px;
+  padding-top: 15px;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  /* @media all and (min-width: 900px) {
+      max-width: 1000em;
+    } */
+}
+
+.ladder-img-container {
+  flex: 0 0 auto;
+}
+
+.ladder-img {
+  position: relative;
+  height: 40px; /* Adjust height as needed */
+  width: auto; /* Maintain aspect ratio */
+  left: -10px;
+}
+
+.ladder-input {
+  flex: 0 0 auto;
+
+  max-height: 30px;
+  max-width: 80px;
+  margin: 0;
+  border-radius: 5px;
+}
+
+.ladder-button {
+  border-radius: 0 5px 5px 0;
+}
+
+.add-flash {
+  /* animation: flashRed 1s infinite; Change '0.5s' to adjust the animation duration */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 5px rgb(238, 29, 186);
+}

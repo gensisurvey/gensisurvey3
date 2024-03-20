@@ -3,8 +3,10 @@ import React, { useState } from "react";
 // import MultipleChoiceSlide from "./Slides/MultipleChoiceSlide.js";
 // import LikertScaleSlide from "./Slides/LikertSlide.js";
 import NodeInputSlide from "./Slides/NodeInputSlide.js";
-import NodeConnectionSlide from "./Slides/NodeSelectionSlide.js";
+import NodeSelectionSlide from "./Slides/NodeSelectionSlide.js";
 import NodeConnect1Slide from "./Slides/NodeConnect1Slide.js";
+import LadderSlide from "./Slides/LadderSlide.js";
+
 
 import NextSlideButton from "./Components/NextSlideButton.js";
 import Banner from "./Components/Banner.js";
@@ -20,7 +22,7 @@ const App = () => {
   const [nextBlocked, setNextBlocked] = useState(false);
   const [submittedToFirebase, setSubmittedToFirebase] = useState(false);
 
-  const TOTAL_SLIDES = 14;
+  const TOTAL_SLIDES = 15;
 
   const add_to_firebase = async (e) => {
     console.log({
@@ -40,7 +42,8 @@ const App = () => {
       all_people_network: (selectionData === null ? selectionData[13].map(
         (item) => `(${item[0]},${item[1]})`) : null
       ),
-      survey_feedback: selectionData[14],
+      ladder_data: selectionData[14],
+      survey_feedback: selectionData[15],
     });
     try {
       const docRef = await addDoc(collection(db, "Participant_Response"), {
@@ -60,7 +63,8 @@ const App = () => {
         all_people_network: (selectionData === null ? selectionData[13].map(
           (item) => `(${item[0]},${item[1]})`) : null
         ),
-        survey_feedback: selectionData[14],
+        ladder_data: selectionData[14],
+        survey_feedback: selectionData[15],
       });
       console.log("Document written with ID: ", docRef.id);
       setSubmittedToFirebase(true);
@@ -128,6 +132,10 @@ const App = () => {
       }
 
     }
+    if (next_slide_index === 12 && next_data_add[12].length < 1) {
+        next_slide_index += 1;
+        next_data_add.push(null);
+    }
 
     next_slide_index += 1
     console.log(currentSelection);
@@ -166,13 +174,39 @@ const App = () => {
   return (
     <div>
       <Banner logo={BannerImg} text={"Cornell University"} />
-      {/* <NodeConnectionSlide
-              nodeNames = {['0', '1', '2', '3', '4', '5']}
+      {/* <LadderSlide
+              promptText="LADDER SLIDE"
+              promptText2="Please answer the following questions about each of them"
+              nodeNames={['0', '1', '2', '3', '4', '5']}
               updateCurrentSelection={updateCurrentSelection}
-              nextBlocked = {nextBlocked}
-
-              
-            />  */}
+              id="ladder_slide"
+            /> */}
+      {/* <NodeSelectionSlide
+              promptText="NODE SELECTION SLIDE"
+              promptText2="Please answer the following questions about each of them"
+              nodeNames={['0', '1', '2', '3', '4', '5']}
+              updateCurrentSelection={updateCurrentSelection}
+              id="ladder_slide"
+            />
+       < NodeConnect1Slide
+              promptText={
+                " NODE SELECT 1 SLIDE"
+              }
+              promptText2={
+                "Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"
+              }
+              nodeNames={['tammy', 'amanda']}
+              updateCurrentSelection={updateCurrentSelection}
+              id="safe_to_you"
+            />
+        <NodeInputSlide
+              promptText="nODE INPUT SLIDE"
+              promptText2="Think about any individuals who are a safe person for you to turn to when you are having a bad day or had a negative experience. Please nominate each person who comes to mind. Type in the first name of each person."
+              maxNom={10}
+              inlineText="Write name"
+              updateCurrentSelection={updateCurrentSelection}
+              id="safe_persons"
+            /> */}
       {slideIndex < TOTAL_SLIDES ? (
         <>
           {/* =====================================================
@@ -329,7 +363,7 @@ const App = () => {
           
           =====================================================*/}
           {slideIndex === 12 && (
-            <NodeConnectionSlide
+            <NodeSelectionSlide
               promptText={"These are all of the individuals you nominated."}
               promptText2={
                 "Which of these individuals know each other? Draw a line between all individuals who know each other."
@@ -341,10 +375,24 @@ const App = () => {
           )}
           {/* =====================================================
           
-          Slides asking who knows each other 
+          Ladder slides 
           
           =====================================================*/}
           {slideIndex === 13 && (
+            <LadderSlide
+              promptText="These are all of the individuals you nominated."
+              promptText2="Please answer the following questions about each of them"
+              nodeNames={selectionData[12]}
+              updateCurrentSelection={updateCurrentSelection}
+              id="ladder_slide"
+            />
+          )}
+          {/* =====================================================
+          
+          Survey Feedback question
+          
+          =====================================================*/}
+          {slideIndex === 14 && (
             <NodeInputSlide
               promptText="Thank you for completing the mockup."
               promptText2="Please add any kind of feedback"
@@ -374,14 +422,6 @@ const App = () => {
               Click this button to submit
             </button>
           )}
-          {/* <div>
-            <h2>Selection Data:</h2>
-            <ul>
-              {selectionData.map((data, index) => (
-                <li key={index}>{data}</li>
-              ))}
-            </ul>
-          </div> */}
         </>
       )}
     </div>
@@ -390,7 +430,7 @@ const App = () => {
 
 export default App;
 
-/* <NodeConnectionSlide
+/* <NodeSelectionSlide
               nodeNames = {['0', '1', '2', '3', '4', '5']}
               updateCurrentSelection={updateCurrentSelection}
               nextBlocked = {nextBlocked}

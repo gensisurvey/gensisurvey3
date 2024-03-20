@@ -1,26 +1,50 @@
-.box-wrapper-2 {
+.node-select-box {
 
-  text-align: center;
+  position: relative;
+  justify-content: center;
+
+  /* margin: 6px; */
   margin: 90px;
   margin-right: 5%;
   margin-left: 5%;
 
-  width: 100%;
   max-width: 90%;
-  /* height: 10%; */
-  padding: 0px 10px 50px 0;
 
-  /* padding-bottom: 100px; */
+  padding: 25px;
+  padding-top: 15px;
 
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-
   /* @media all and (min-width: 900px) {
     max-width: 1000em;
   } */
 }
+
+.node-select-text-wrapper {
+  position: relative;
+  padding: 0 10px 10px 20px;
+  text-align: center;
+}
+
+.node-select-h1 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.node-select-h2 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.node-select-h3 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+
+
 
 .node-box {
   position: relative;
@@ -35,36 +59,11 @@
   border-radius: 3%;
   /* border-width: 10px; */
   border: 5px solid black; /* Border with 2px width, solid style, and black color */
-  margin-top: 20px;
+  /* margin-top: 20px; */
   /* padding: 10px; */
 }
 .svg {
   width: 100%; /* Make the SVG element fill the container */
   height: 100%; /* Make the SVG element fill the container */
   overflow: hidden; /* Hide overflow content */
-}
-
-.input-header {
-  position: relative;
-  margin-top: 30px;
-  white-space: pre-wrap;
-  margin-left: 10px;
-  font-weight: 300;
-
-}
-.input-header-2 {
-  position: relative;
-  margin-top: 15px;
-  margin-bottom: 10px;
-  white-space: pre-wrap;
-  margin-left: 10px;
-  font-weight: 300;
-
-}
-
-
-.text-wrapper {
-  position: relative;
-  margin-top: 20px;
-  padding: 20px
 }

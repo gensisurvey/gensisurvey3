@@ -2,7 +2,12 @@ import React, { useRef, useEffect, useState } from "react";
 import "./NodeSelectionSlide.css";
 import * as d3 from "d3";
 
-const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrentSelection, nextBlocked }) => {
+const NodeSelectionSlide = ({
+  promptText,
+  promptText2,
+  nodeNames,
+  updateCurrentSelection,
+}) => {
   const svgRef = useRef();
   const nodeBoxRef = useRef();
   const startLocationRef = useRef([]);
@@ -17,25 +22,24 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
     // Calculate direction vector from initial point to target point
     let directionX = targetPoint.x - initialPoint.x;
     let directionY = targetPoint.y - initialPoint.y;
-  
+
     // Calculate magnitude of direction vector
     let magnitude = Math.sqrt(directionX ** 2 + directionY ** 2);
-  
+
     // Normalize direction vector
     let normalizedDirectionX = directionX / magnitude;
     let normalizedDirectionY = directionY / magnitude;
-  
+
     // Scale normalized direction vector by distance
     let scaledDirectionX = normalizedDirectionX * distance;
     let scaledDirectionY = normalizedDirectionY * distance;
-  
+
     // Calculate new point by adding scaled direction vector to initial point
     let newPointX = initialPoint.x + scaledDirectionX;
     let newPointY = initialPoint.y + scaledDirectionY;
-  
+
     return { x: newPointX, y: newPointY };
   }
-
 
   // Call addBall when the component mounts
   useEffect(() => {
@@ -57,12 +61,6 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
       .attr("r", 20)
       .attr("fill", (d) => d.color)
       .style("z-index", 5) // Set the z-index to place the circles behind text
-      // .style("box-shadow", "10px blck")   
-      // .attr("style", (d) => d.id === recentlyClickedBalls[0] ? "outline: thin solid red;": "outline: none")   //This will do the job
-
-      // .style("box-shadow", (d) => d.id === recentlyClickedBalls[0] ? "2px 2px 100px rgba(0, 0, 0, 0.5)" : 0)
-      // .style("border", (d) => d.id === recentlyClickedBalls[0] ? 0 : "5px solid black" )
-
       .call(
         d3.drag().on("start", dragStart).on("drag", dragging).on("end", dragEnd)
       );
@@ -99,32 +97,32 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
       if (temp.length === 0) {
         temp.push(d.id); // adding to stack
         d3.select(obj)
-        .style("stroke", "black")    // set the line colour
-        .style("opacity", .5)      // set the element opacity
-        .style("stroke-width", 5)    // set the stroke width
-        
+          .style("stroke", "black") // set the line colour
+          .style("opacity", 0.5) // set the element opacity
+          .style("stroke-width", 5); // set the stroke width
       } else if (temp.length === 1 && d.id === temp[0]) {
         temp.shift(); // undoing a click
 
-        d3.select(obj)
-        .attr("style", "")   //This will do the job
+        d3.select(obj).attr("style", ""); //This will do the job
       } else if (temp.length === 1 && d.id !== temp[0]) {
         temp.push(d.id);
-        setAllLines((allLines) => [...allLines, [temp[0], temp[1]].sort((a, b) => a - b)]);
-        
-        d3.selectAll("circle").filter((d) => d.id === temp[0])
-        .attr("style", "") 
+        setAllLines((allLines) => [
+          ...allLines,
+          [temp[0], temp[1]].sort((a, b) => a - b),
+        ]);
 
-        d3.select(obj)
-        .attr("style", "") 
+        d3.selectAll("circle")
+          .filter((d) => d.id === temp[0])
+          .attr("style", "");
+
+        d3.select(obj).attr("style", "");
 
         temp.shift();
         temp.shift();
-
       } else {
         console.log("exception");
       }
-      console.log(temp)
+      console.log(temp);
       setRecentlyClickedBalls(temp);
       // console.log(temp);
     };
@@ -153,8 +151,7 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
         .attr("cy", (d.y = newY))
         // .attr("style", "outline: thin solid red")   //This will do the job
 
-        .style("z-index", 5)
-
+        .style("z-index", 5);
 
       // Update the text position with the node
       svg
@@ -165,11 +162,23 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
 
       svg
         .selectAll("line")
-        .attr("x1", (d) => findPointCloserToPoint(ballsData[d[0]], ballsData[d[1]], 20).x)
-        .attr("y1", (d) => findPointCloserToPoint(ballsData[d[0]], ballsData[d[1]], 20).y)
-        .attr("x2", (d) => findPointCloserToPoint(ballsData[d[1]], ballsData[d[0]], 20).x)
-        .attr("y2", (d) => findPointCloserToPoint(ballsData[d[1]], ballsData[d[0]], 20).y)
-        .style("z-index", -1000)
+        .attr(
+          "x1",
+          (d) => findPointCloserToPoint(ballsData[d[0]], ballsData[d[1]], 20).x
+        )
+        .attr(
+          "y1",
+          (d) => findPointCloserToPoint(ballsData[d[0]], ballsData[d[1]], 20).y
+        )
+        .attr(
+          "x2",
+          (d) => findPointCloserToPoint(ballsData[d[1]], ballsData[d[0]], 20).x
+        )
+        .attr(
+          "y2",
+          (d) => findPointCloserToPoint(ballsData[d[1]], ballsData[d[0]], 20).y
+        )
+        .style("z-index", -1000);
     }
 
     function dragEnd(event, d) {
@@ -189,9 +198,9 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
   function removeDuplicatePairs(list) {
     const seen = new Map();
     let hasDuplicate = false;
-  
+
     list.forEach((item, index) => {
-      const sortedItem = item.slice().sort().join(',');
+      const sortedItem = item.slice().sort().join(",");
       if (seen.has(sortedItem)) {
         list.splice(index, 1); // Remove the duplicate item at the current index
         list.splice(seen.get(sortedItem), 1); // Remove the original duplicate item
@@ -200,7 +209,7 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
         seen.set(sortedItem, index); // Store the index of the first occurrence
       }
     });
-  
+
     return { newList: list, hasDuplicate };
   }
 
@@ -221,14 +230,26 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
         .data(allLines)
         .enter()
         .append("line")
-        .attr("x1", (d) => findPointCloserToPoint(ballsData[d[0]], ballsData[d[1]], 20).x)
-        .attr("y1", (d) => findPointCloserToPoint(ballsData[d[0]], ballsData[d[1]], 20).y)
-        .attr("x2", (d) => findPointCloserToPoint(ballsData[d[1]], ballsData[d[0]], 20).x)
-        .attr("y2", (d) => findPointCloserToPoint(ballsData[d[1]], ballsData[d[0]], 20).y)
+        .attr(
+          "x1",
+          (d) => findPointCloserToPoint(ballsData[d[0]], ballsData[d[1]], 20).x
+        )
+        .attr(
+          "y1",
+          (d) => findPointCloserToPoint(ballsData[d[0]], ballsData[d[1]], 20).y
+        )
+        .attr(
+          "x2",
+          (d) => findPointCloserToPoint(ballsData[d[1]], ballsData[d[0]], 20).x
+        )
+        .attr(
+          "y2",
+          (d) => findPointCloserToPoint(ballsData[d[1]], ballsData[d[0]], 20).y
+        )
         .attr("stroke", "black")
         .attr("stroke-width", 4)
         .style("pointer-events", null)
-        .style("z-index", -1000)
+        .style("z-index", -1000);
     }
   }, [allLines]);
 
@@ -300,11 +321,15 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
   };
 
   return (
-   <div className="box-wrapper-2">
-      <div className="text-wrapper">
-        <h1 className="input-header">{promptText}</h1>
-        <h2 className="input-header-2">{promptText2}</h2>
-        <h3 className="input-header-2">{"INSTRUCTIONS: Click on the pairs that know each other, drag the nodes to make it easier to visualize"}</h3>
+    <div className="node-select-box">
+      <div className="node-select-text-wrapper">
+        <h1 className="node-select-h1">{promptText}</h1>
+        <h2 className="node-select-h2">{promptText2}</h2>
+        <h3 className="node-select-h3">
+          {
+            "INSTRUCTIONS: Click on the pairs that know each other, drag the nodes to make it easier to visualize"
+          }
+        </h3>
       </div>
       <div ref={nodeBoxRef} className="node-box">
         <svg ref={svgRef} className="svg"></svg>
@@ -313,4 +338,4 @@ const NodeConnectionSlide = ({ promptText, promptText2, nodeNames, updateCurrent
   );
 };
 
-export default NodeConnectionSlide;
+export default NodeSelectionSlide;

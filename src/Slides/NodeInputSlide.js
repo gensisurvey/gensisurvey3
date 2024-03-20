@@ -19,7 +19,7 @@ const NodeInputSlide = ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (items.length >= maxNom) {
       setMaxItemsReached(true); // Activate flashing effect when maxNom is reached
 
@@ -36,13 +36,12 @@ const NodeInputSlide = ({
   };
 
   return (
-    <div className="node-input-slide">
-      <h1 className="input-header">{promptText}</h1>
-      <h2 className="input-header">{promptText2}</h2>
-      <form
-        className={flash ? "add-flash" : ""}
-        onSubmit={handleSubmit}
-      >
+    <div className="node-input-slide-box">
+      <div className="node-input-text-wrapper">
+        <h1 className="node-input-h1">{promptText}</h1>
+        <h2 className="node-input-h2">{promptText2}</h2>
+      </div>
+      <form className={flash ? "add-flash" : ""} onSubmit={handleSubmit}>
         <input
           type="text"
           value={inputValue}
@@ -53,9 +52,6 @@ const NodeInputSlide = ({
           Add
         </button>
       </form>
-      {/* <p className="error-message">{maxItemsReached && '!'}</p> */}
-      {/* <p className="error-message">{flash && 'Max limit reached!'}</p> */}
-      {/* <h3 className="max-nom">{"(max "}{maxNom}{" nominations)"}</h3> */}
       <ul className="item-list">
         {items.map((item, index) => (
           <li key={index} id={index}>

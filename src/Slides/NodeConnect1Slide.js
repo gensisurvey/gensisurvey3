@@ -149,10 +149,10 @@ const NodeConnect1Slide = ({
   };
 
   return (
-    <div className="box-wrapper-1">
-      <div className="text-wrapper">
-        <h1 className="input-header">{promptText}</h1>
-        <h2 className="input-header-2">{promptText2}</h2>
+    <div className="node-connect-slide-box">
+      <div className="node-connect-text-wrapper">
+        <h1 className="node-connect-h1">{promptText}</h1>
+        <h2 className="node-connect-h2">{promptText2}</h2>
       </div>
       <div ref={nodeBoxRef} className="node-box">
         <svg ref={svgRef} className="svg"></svg>

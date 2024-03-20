@@ -1,4 +1,5 @@
-.box-wrapper-1 {
+.node-connect-slide-box {
+  position: relative;
 
   text-align: center;
   margin: 90px;
@@ -22,6 +23,28 @@
   } */
 }
 
+.node-connect-text-wrapper {
+  position: relative;
+  padding: 0 10px 10px 20px;
+  text-align: center;
+}
+
+.node-connect-h1 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.node-connect-h2 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.node-connect-h3 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+
 .node-box {
   position: relative;
   max-width: 600px;
@@ -44,24 +67,8 @@
   overflow: hidden; /* Hide overflow content */
 }
 
-.input-header {
-  position: relative;
-  white-space: pre-wrap;
-  margin-left: 10px;
-  margin-top: 0;
-  font-weight: 300;
-}
-.input-header-2 {
-  position: relative;
-  margin-top: 15px;
-  margin-bottom: 10px;
-  white-space: pre-wrap;
-  margin-left: 10px;
-  font-weight: 300;
-}
-
-.text-wrapper {
-  position: relative;
-  margin-top: 20px;
-  padding: 20px;
+.highlighted {
+  stroke: red; /* Change the outline color to red */
+  stroke-width: 4px; /* Set the outline width */
+  fill-opacity: 0.8; /* Reduce the opacity of the fill */
 }

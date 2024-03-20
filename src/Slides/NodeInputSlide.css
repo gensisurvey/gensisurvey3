@@ -1,8 +1,7 @@
-.node-input-slide {
+.node-input-slide-box {
   position: relative;
   justify-content: center;
 
-  /* margin: 6px; */
   margin: 90px;
   margin-right: 5%;
   margin-left: 5%;
@@ -16,30 +15,32 @@
   border-radius: 5px;
   background-color: #f9f9f9;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-
   /* @media all and (min-width: 900px) {
     max-width: 1000em;
   } */
 }
 
-
-/* Define styles for highlighted circles */
-.highlighted {
-  stroke: red; /* Change the outline color to red */
-  stroke-width: 4px; /* Set the outline width */
-  fill-opacity: 0.8; /* Reduce the opacity of the fill */
-}
-
-.input-header{
-  /* margin-bottom: 10px; */
-  white-space: pre-wrap;
-  margin-top: 50px;
-  margin-left: 10px;
-  font-weight: 300;
+.node-input-text-wrapper {
+  position: relative;
+  padding: 0 10px 10px 20px;
   text-align: center;
-
-
 }
+
+.node-input-h1 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.node-input-h2 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.node-input-h3 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
 
 form {
   display: flex;
@@ -83,22 +84,6 @@ button:hover {
 
 }
 
-.max-nom {
-  margin-top: 0;
-  font-size: 15px;
-  margin-left: 10px;
-
-}
-
-
-/* Define a CSS animation for flashing red border */
-@keyframes flashRed {
-  0% { border-color: transparent; }
-  50% { border-color: red; }
-  100% { border-color: transparent; }
-}
-
-/* Apply the animation to the button when the 'flash' class is active */
 .add-flash {
   /* animation: flashRed 1s infinite; Change '0.5s' to adjust the animation duration */
   border: 1px solid #ccc;
@@ -106,13 +91,6 @@ button:hover {
   background-color: #f9f9f9;
   box-shadow: 0 0 5px rgb(238, 29, 186);
 }
-
-.error-message {
-  color: red; /* Text color */
-  font-size: 14px; /* Font size */
-  margin-top: 5px; /* Top margin for spacing */
-}
-
 
 .max-items-reached {
   text-align: center;
