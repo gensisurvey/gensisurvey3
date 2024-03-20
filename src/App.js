@@ -18,7 +18,9 @@ const App = () => {
   const [currentSelection, setCurrentSelection] = useState(null);
   const [slideIndex, setSlideIndex] = useState(0);
   const [nextBlocked, setNextBlocked] = useState(false);
-  const [submittedToFirebase, setSubmittedToFirebase] = useState(false)
+  const [submittedToFirebase, setSubmittedToFirebase] = useState(false);
+
+  const TOTAL_SLIDES = 14;
 
   const add_to_firebase = async (e) => {
     console.log({
@@ -35,8 +37,8 @@ const App = () => {
       good_happened_to_you: selectionData[10],
       bad_happened_to_you: selectionData[11],
       all_people: selectionData[12],
-      all_people_network: selectionData[13].map(
-        (item) => `(${item[0]},${item[1]})`
+      all_people_network: (selectionData === null ? selectionData[13].map(
+        (item) => `(${item[0]},${item[1]})`) : null
       ),
       survey_feedback: selectionData[14],
     });
@@ -55,80 +57,123 @@ const App = () => {
         good_happened_to_you: selectionData[10],
         bad_happened_to_you: selectionData[11],
         all_people: selectionData[12],
-        all_people_network: selectionData[13].map(
-          (item) => `(${item[0]},${item[1]})`
+        all_people_network: (selectionData === null ? selectionData[13].map(
+          (item) => `(${item[0]},${item[1]})`) : null
         ),
         survey_feedback: selectionData[14],
       });
       console.log("Document written with ID: ", docRef.id);
-      setSubmittedToFirebase(true)
+      setSubmittedToFirebase(true);
     } catch (error) {
       console.error("Error adding document: ", error);
     }
   };
 
-  const total_slides = 14;
-
-  const saveSelectionData = () => {
-    console.log(slideIndex);
-
-    if (slideIndex === 11) {
-      // This data needs to be saved manually before the every nominated person slide
-      const no_dup = [
-        ...new Set(
-          selectionData[0].concat(
-            selectionData[1],
-            selectionData[2],
-            selectionData[3],
-            selectionData[4],
-            selectionData[5]
-          )
-        ),
-      ];
-
-      setSelectionData([...selectionData, currentSelection, no_dup]);
-      console.log([...selectionData, currentSelection, no_dup]);
-    } else {
-      setSelectionData([...selectionData, currentSelection]);
-      console.log([...selectionData, currentSelection]);
-    }
-  };
-
   const updateCurrentSelection = (option) => {
+    setNextBlocked(false);
     setCurrentSelection(option);
   };
 
+  const updateState = () => {
+    console.log("===============", slideIndex);
+
+    let next_data_add = [...selectionData, currentSelection];
+    let next_slide_index = slideIndex;
+
+    if (next_slide_index === 5 && next_data_add[0] === null) {
+      next_slide_index += 1;
+      next_data_add.push(null);
+    }
+    if (next_slide_index === 6 && next_data_add[1] === null) {
+      next_slide_index += 1;
+      next_data_add.push(null);
+    }
+    if (next_slide_index === 7 && next_data_add[2] === null) {
+      next_slide_index += 1;
+      next_data_add.push(null);
+    }
+    if (next_slide_index === 8 && next_data_add[3] === null) {
+      next_slide_index += 1;
+      next_data_add.push(null);
+    }
+    if (next_slide_index === 9 && next_data_add[4] === null) {
+      next_slide_index += 1;
+      next_data_add.push(null);
+    }
+    if (next_slide_index === 10 && next_data_add[5] === null) {
+      next_slide_index += 1;
+      next_data_add.push(null);
+    }
+    if (next_slide_index === 11) {
+      // This data needs to be saved manually before the every nominated person slide
+
+      let listsToConcatenate = [
+        next_data_add[0],
+        next_data_add[1],
+        next_data_add[2],
+        next_data_add[3],
+        next_data_add[4],
+        next_data_add[5],
+      ].filter((list) => list !== null);
+      let concatenatedList = [].concat(...listsToConcatenate);
+      const no_dup = [...new Set(concatenatedList)];
+
+      if (no_dup.length <= 1) {
+        next_slide_index += 1;
+        next_data_add.push(no_dup);
+        next_data_add.push(null);
+      }
+      else {
+        next_data_add.push(no_dup);
+      }
+
+    }
+
+    next_slide_index += 1
+    console.log(currentSelection);
+    console.log(next_data_add);
+    console.log(next_slide_index)
+    setSelectionData(next_data_add);
+    setSlideIndex(next_slide_index);
+    setCurrentSelection(null);
+  };
+
   const handleNextSlide = () => {
-    if (slideIndex === total_slides - 1) {
-      setSlideIndex(slideIndex + 1);
-      saveSelectionData();
-    } else if (
-      slideIndex === 6 ||
-      slideIndex === 7 ||
-      slideIndex === 8 ||
-      slideIndex === 9 ||
-      slideIndex === 10 ||
-      slideIndex === 11
-    ) {
-      console.log(currentSelection);
-      setSlideIndex(slideIndex + 1);
-      saveSelectionData();
-      setCurrentSelection(null);
-    } else if (currentSelection !== null) {
-      console.log(currentSelection);
-      setSlideIndex(slideIndex + 1);
-      saveSelectionData();
-      setCurrentSelection(null);
+    // if ( // add here to REMOVE next button stopping effect
+    //   slideIndex === 6 ||
+    //   slideIndex === 7 ||
+    //   slideIndex === 8 ||
+    //   slideIndex === 9 ||
+    //   slideIndex === 10 ||
+    //   slideIndex === 11
+    // ) {
+    //   updateState()
+    // } else
+    if (currentSelection !== null) {
+      updateState();
     } else {
       setNextBlocked(true);
-      setTimeout(() => setNextBlocked(false), 1000); // Turn off flashing after 0.5s
+    }
+  };
+
+  const nextBlockOverride = (tf) => {
+    setNextBlocked(false);
+    if (tf) {
+      updateState();
     }
   };
 
   return (
     <div>
       <Banner logo={BannerImg} text={"Cornell University"} />
-      {slideIndex < total_slides ? (
+      {/* <NodeConnectionSlide
+              nodeNames = {['0', '1', '2', '3', '4', '5']}
+              updateCurrentSelection={updateCurrentSelection}
+              nextBlocked = {nextBlocked}
+
+              
+            />  */}
+      {slideIndex < TOTAL_SLIDES ? (
         <>
           {/* =====================================================
           
@@ -309,20 +354,26 @@ const App = () => {
               id="survey_feedback"
             />
           )}
-          <NextSlideButton nextBlocked={nextBlocked} onClick={handleNextSlide} />
-
+          <NextSlideButton
+            nextBlockOverride={nextBlockOverride}
+            nextBlocked={nextBlocked}
+            onClick={handleNextSlide}
+          />
         </>
-        
       ) : (
         <>
           <p style={{ marginTop: 100, marginLeft: 30 }}>
             All slides have been completed.
           </p>
-          {submittedToFirebase ? 
-          
-            <p style={{marginLeft: 30 }}>Thank you, you can close the tab now</p> :
-            <button style={{marginLeft: 30 }} onClick={add_to_firebase}>Click this button to submit</button>
-          }
+          {submittedToFirebase ? (
+            <p style={{ marginLeft: 30 }}>
+              Thank you, you can close the tab now
+            </p>
+          ) : (
+            <button style={{ marginLeft: 30 }} onClick={add_to_firebase}>
+              Click this button to submit
+            </button>
+          )}
           {/* <div>
             <h2>Selection Data:</h2>
             <ul>
@@ -339,7 +390,6 @@ const App = () => {
 
 export default App;
 
-
 /* <NodeConnectionSlide
               nodeNames = {['0', '1', '2', '3', '4', '5']}
               updateCurrentSelection={updateCurrentSelection}
@@ -347,7 +397,7 @@ export default App;
 
               
             /> */
-      /* <NodeConnect1Slide
+/* <NodeConnect1Slide
       promptText={"These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."}
       promptText2={"Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"}
         nodeNames={["0", "1", "2", "3", "4", "5"]}

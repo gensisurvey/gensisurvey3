@@ -15,7 +15,11 @@ const NodeConnect1Slide = ({
 
   // Call addBall when the component mounts
   useEffect(() => {
-    addBall();
+    if (nodeNames === null) {
+      updateCurrentSelection(null)
+    }
+    else { addBall();
+     }
   }, []);
 
   useEffect(() => {
@@ -145,7 +149,7 @@ const NodeConnect1Slide = ({
   };
 
   return (
-    <div>
+    <div className="box-wrapper-1">
       <div className="text-wrapper">
         <h1 className="input-header">{promptText}</h1>
         <h2 className="input-header-2">{promptText2}</h2>

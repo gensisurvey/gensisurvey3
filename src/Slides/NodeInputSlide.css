@@ -1,14 +1,25 @@
 .node-input-slide {
-  margin: 40px;
-  margin-right: 55px;
-  margin-left: 55px;
+  position: relative;
+  justify-content: center;
+
+  /* margin: 6px; */
+  margin: 90px;
+  margin-right: 5%;
+  margin-left: 5%;
+
+  max-width: 90%;
+
   padding: 25px;
+  padding-top: 15px;
+
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  margin-top: 100px;
-  
+
+  /* @media all and (min-width: 900px) {
+    max-width: 1000em;
+  } */
 }
 
 
@@ -19,11 +30,14 @@
   fill-opacity: 0.8; /* Reduce the opacity of the fill */
 }
 
-.input-header {
-  margin-bottom: 10px;
+.input-header{
+  /* margin-bottom: 10px; */
   white-space: pre-wrap;
+  margin-top: 50px;
   margin-left: 10px;
   font-weight: 300;
+  text-align: center;
+
 
 }
 
@@ -31,6 +45,7 @@ form {
   display: flex;
   /* margin-bottom: 5px; */
   margin-left: 10px;
+  margin-top: 10px;
 
 }
 
@@ -64,7 +79,7 @@ button:hover {
   margin-bottom: 5px;
   font-size: 20px;
   margin-left: 10px;
-  font-weight: 400;
+  font-weight: 500;
 
 }
 
@@ -84,12 +99,24 @@ button:hover {
 }
 
 /* Apply the animation to the button when the 'flash' class is active */
-.flash {
-  animation: flashRed 1s infinite; /* Change '0.5s' to adjust the animation duration */
+.add-flash {
+  /* animation: flashRed 1s infinite; Change '0.5s' to adjust the animation duration */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 5px rgb(238, 29, 186);
 }
 
 .error-message {
   color: red; /* Text color */
   font-size: 14px; /* Font size */
   margin-top: 5px; /* Top margin for spacing */
+}
+
+
+.max-items-reached {
+  text-align: center;
+  color: rgb(240, 103, 103);
+  font-weight: 500;
+  /* border: 3px solid green; */
 }
