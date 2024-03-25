@@ -36,7 +36,7 @@ const NodeInputSlide = ({
   };
 
   return (
-    <div className="node-input-slide-box">
+    <>
       <div className="node-input-text-wrapper">
         <h1 className="node-input-h1">{promptText}</h1>
         <h2 className="node-input-h2">{promptText2}</h2>
@@ -55,7 +55,7 @@ const NodeInputSlide = ({
       <ul className="item-list">
         {items.map((item, index) => (
           <li key={index} id={index}>
-            {index + 1}. {item}
+            <b>{index + 1}. </b>{item}
           </li>
         ))}
       </ul>
@@ -64,7 +64,7 @@ const NodeInputSlide = ({
           <p>Max Items Reached</p>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

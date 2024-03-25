@@ -321,7 +321,7 @@ const NodeSelectionSlide = ({
   };
 
   return (
-    <div className="node-select-box">
+    <>
       <div className="node-select-text-wrapper">
         <h1 className="node-select-h1">{promptText}</h1>
         <h2 className="node-select-h2">{promptText2}</h2>
@@ -334,7 +334,7 @@ const NodeSelectionSlide = ({
       <div ref={nodeBoxRef} className="node-box">
         <svg ref={svgRef} className="svg"></svg>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -1,0 +1,120 @@
+.the-slide-center {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.the-slide-box {
+  width: 90vw; /* Initial width as 90% of the viewport width */
+  max-width: 1000px; /* Maximum width of 1000px */
+  margin: 0 auto; /* Center the box horizontally */
+  /* Add other styling properties as needed */
+
+  /* Media query for screens smaller than 1000px */
+
+  padding: 25px;
+  
+  border: 1px solid #ccc;
+  border-radius: 0px 0px 5px 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  border-top: none;
+}
+
+@media (max-width: 1000px) {
+  .the-slide-box {
+    width: 100vw; /* Adjust to 90% of the viewport width for smaller screens */
+    max-width: none; /* Remove the maximum width constraint */
+    /* margin-right: 5%;
+    margin-left: 5%; */
+    border-left: none;
+    border-right: none;
+    border-radius: 0px;
+    box-shadow: none;
+
+
+  }
+}
+
+.the-slide-text-wrapper {
+  position: relative;
+  padding: 0 10px 10px 20px;
+  text-align: center;
+}
+
+.the-slide-h1 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.the-slide-h2 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.the-slide-h3 {
+  white-space: pre-wrap;
+  font-weight: 300;
+}
+
+.mini-the-slide-wrapper {
+  display: flex;
+  flex-wrap: wrap; /* Allow items to wrap to the next row */
+  gap: 10px; /* Adjust the gap between items as needed */
+  justify-content: center;
+}
+
+.the-slide-mini-box {
+  /* position: flex;
+    justify-content: center; */
+
+  margin: 10px 10px 10px 10px;
+  /* margin-right: 5%;
+    margin-left: 5%;  */
+
+  width: 200px;
+  /* max-width: 23%; */
+
+  padding: 25px;
+  padding-top: 15px;
+
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  /* @media all and (min-width: 900px) {
+        max-width: 1000em;
+      } */
+}
+
+.the-slide-img-container {
+  flex: 0 0 auto;
+}
+
+.the-slide-img {
+  position: relative;
+  height: 40px; /* Adjust height as needed */
+  width: auto; /* Maintain aspect ratio */
+  left: -10px;
+}
+
+.the-slide-input {
+  flex: 0 0 auto;
+
+  max-height: 30px;
+  max-width: 80px;
+  margin: 0;
+  border-radius: 5px;
+}
+
+.the-slide-button {
+  border-radius: 0 5px 5px 0;
+}
+
+.add-flash {
+  /* animation: flashRed 1s infinite; Change '0.5s' to adjust the animation duration */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 5px rgb(238, 29, 186);
+}

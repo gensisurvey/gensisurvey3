@@ -31,7 +31,7 @@ const LadderSlide = ({
   };
 
   return (
-    <div className="ladder-box">
+    <>
       <div className="ladder-text-wrapper">
         <h1 className="ladder-h1">{promptText}</h1>
         <h2 className="ladder-h2">{promptText2}</h2>
@@ -56,7 +56,7 @@ const LadderSlide = ({
           <div>Thank you, click next slide please</div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

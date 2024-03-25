@@ -1,18 +1,13 @@
 .node-select-box {
+  width: 90vw; /* Initial width as 90% of the viewport width */
+  max-width: 800px; /* Maximum width of 1000px */
+  margin: 0 auto; /* Center the box horizontally */
+  /* Add other styling properties as needed */
 
-  position: relative;
-  justify-content: center;
-
-  /* margin: 6px; */
-  margin: 90px;
-  margin-right: 5%;
-  margin-left: 5%;
-
-  max-width: 90%;
+  /* Media query for screens smaller than 1000px */
 
   padding: 25px;
-  padding-top: 15px;
-
+  
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;

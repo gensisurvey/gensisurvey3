@@ -149,7 +149,7 @@ const NodeConnect1Slide = ({
   };
 
   return (
-    <div className="node-connect-slide-box">
+    <>
       <div className="node-connect-text-wrapper">
         <h1 className="node-connect-h1">{promptText}</h1>
         <h2 className="node-connect-h2">{promptText2}</h2>
@@ -157,7 +157,7 @@ const NodeConnect1Slide = ({
       <div ref={nodeBoxRef} className="node-box">
         <svg ref={svgRef} className="svg"></svg>
       </div>
-    </div>
+    </>
   );
 };
 

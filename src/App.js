@@ -7,13 +7,15 @@ import NodeSelectionSlide from "./Slides/NodeSelectionSlide.js";
 import NodeConnect1Slide from "./Slides/NodeConnect1Slide.js";
 import LadderSlide from "./Slides/LadderSlide.js";
 
-
 import NextSlideButton from "./Components/NextSlideButton.js";
 import Banner from "./Components/Banner.js";
-import BannerImg from "./Images/cornell_seal_simple_web_b31b1b.svg";
+import BannerImg from "./Images/cornell_seal_simple_web_black.svg";
 
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "./config/firestore.js";
+import TheSlide from "./Components/TheSlide.js";
+
+import "./App.css";
 
 const App = () => {
   const [selectionData, setSelectionData] = useState([]);
@@ -39,9 +41,10 @@ const App = () => {
       good_happened_to_you: selectionData[10],
       bad_happened_to_you: selectionData[11],
       all_people: selectionData[12],
-      all_people_network: (selectionData === null ? selectionData[13].map(
-        (item) => `(${item[0]},${item[1]})`) : null
-      ),
+      all_people_network:
+        selectionData === null
+          ? selectionData[13].map((item) => `(${item[0]},${item[1]})`)
+          : null,
       ladder_data: selectionData[14],
       survey_feedback: selectionData[15],
     });
@@ -60,9 +63,10 @@ const App = () => {
         good_happened_to_you: selectionData[10],
         bad_happened_to_you: selectionData[11],
         all_people: selectionData[12],
-        all_people_network: (selectionData === null ? selectionData[13].map(
-          (item) => `(${item[0]},${item[1]})`) : null
-        ),
+        all_people_network:
+          selectionData === null
+            ? selectionData[13].map((item) => `(${item[0]},${item[1]})`)
+            : null,
         ladder_data: selectionData[14],
         survey_feedback: selectionData[15],
       });
@@ -126,21 +130,19 @@ const App = () => {
         next_slide_index += 1;
         next_data_add.push(no_dup);
         next_data_add.push(null);
-      }
-      else {
+      } else {
         next_data_add.push(no_dup);
       }
-
     }
     if (next_slide_index === 12 && next_data_add[12].length < 1) {
-        next_slide_index += 1;
-        next_data_add.push(null);
+      next_slide_index += 1;
+      next_data_add.push(null);
     }
 
-    next_slide_index += 1
+    next_slide_index += 1;
     console.log(currentSelection);
     console.log(next_data_add);
-    console.log(next_slide_index)
+    console.log(next_slide_index);
     setSelectionData(next_data_add);
     setSlideIndex(next_slide_index);
     setCurrentSelection(null);
@@ -172,16 +174,37 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="app-box">
       <Banner logo={BannerImg} text={"Cornell University"} />
-      {/* <LadderSlide
+      <TheSlide>
+      <LadderSlide
               promptText="LADDER SLIDE"
               promptText2="Please answer the following questions about each of them"
               nodeNames={['0', '1', '2', '3', '4', '5']}
               updateCurrentSelection={updateCurrentSelection}
               id="ladder_slide"
-            /> */}
-      {/* <NodeSelectionSlide
+            />
+     
+        {/* 
+         < NodeConnect1Slide
+              promptText={
+                " NODE SELECT 1 SLIDE"
+              }
+              promptText2={
+                "Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"
+              }
+              nodeNames={['tammy', 'amanda']}
+              updateCurrentSelection={updateCurrentSelection}
+              id="safe_to_you"
+            />
+      <LadderSlide
+              promptText="LADDER SLIDE"
+              promptText2="Please answer the following questions about each of them"
+              nodeNames={['0', '1', '2', '3', '4', '5']}
+              updateCurrentSelection={updateCurrentSelection}
+              id="ladder_slide"
+            />
+      <NodeSelectionSlide
               promptText="NODE SELECTION SLIDE"
               promptText2="Please answer the following questions about each of them"
               nodeNames={['0', '1', '2', '3', '4', '5']}
@@ -207,223 +230,224 @@ const App = () => {
               updateCurrentSelection={updateCurrentSelection}
               id="safe_persons"
             /> */}
-      {slideIndex < TOTAL_SLIDES ? (
-        <>
-          {/* =====================================================
+        {slideIndex < TOTAL_SLIDES ? (
+          <>
+            {/* =====================================================
           
           Slides for inputing names into different categories 
           
           =====================================================*/}
-          {slideIndex === 0 && (
-            <NodeInputSlide
-              promptText="Some of your peers may be a safe person for you to turn to, during challenging, threatening, or uncertain times."
-              promptText2="Think about any individuals who are a safe person for you to turn to when you are having a bad day or had a negative experience. Please nominate each person who comes to mind. Type in the first name of each person."
-              maxNom={10}
-              inlineText="Write name"
-              updateCurrentSelection={updateCurrentSelection}
-              id="safe_persons"
-            />
-          )}
-          {slideIndex === 1 && (
-            <NodeInputSlide
-              promptText="Some of your peers may be someone you want to stay in close proximity to, perhaps living near them or sticking by them at a social event or in class."
-              promptText2="Think about any individuals you like staying within close proximity to. Please nominate each person who comes to mind. Type in the first name of each person."
-              maxNom={10}
-              inlineText="Write name"
-              updateCurrentSelection={updateCurrentSelection}
-              id="close_proximity"
-            />
-          )}
-          {slideIndex === 2 && (
-            <NodeInputSlide
-              promptText="Some of your peers may be someone who provides you with a sense of security, which then allows you to explore and more open to new experiences."
-              promptText2="Think about any individuals who provide you with this sense of security. Please nominate each person who comes to mind. Type in the first name of each person."
-              maxNom={10}
-              inlineText="Write name"
-              updateCurrentSelection={updateCurrentSelection}
-              id="sense_of_security"
-            />
-          )}
-          {slideIndex === 3 && (
-            <NodeInputSlide
-              promptText="Some of your peers may be someone whom when they are not with you or when you are separated from them, you feel anxious or distressed."
-              promptText2="Think about any individuals whom you feel anxious or distressed when separate from them. Please nominate each person who comes to mind. Type in the first name of each person."
-              maxNom={10}
-              inlineText="Write name"
-              updateCurrentSelection={updateCurrentSelection}
-              id="anxious_or_distressed"
-            />
-          )}
-          {slideIndex === 4 && (
-            <NodeInputSlide
-              promptText="If something good happened to you that you wanted to share with someone or just wanted to spend time with someone, who would you reach out to?"
-              promptText2="Please nominate each person who comes to mind. Type in the first name of each person."
-              maxNom={10}
-              inlineText="Write name"
-              updateCurrentSelection={updateCurrentSelection}
-              id="good_happened"
-            />
-          )}
-          {slideIndex === 5 && (
-            <NodeInputSlide
-              promptText="If something bad happened to you that you wanted to share with someone or just wanted to spend time with someone, who would you reach out to?"
-              promptText2="Please nominate each person who comes to mind. Type in the first name of each person."
-              maxNom={10}
-              inlineText="Write name"
-              updateCurrentSelection={updateCurrentSelection}
-              id="bad_happened"
-            />
-          )}
-          {/* =====================================================
+            {slideIndex === 0 && (
+              <NodeInputSlide
+                promptText="Some of your peers may be a safe person for you to turn to, during challenging, threatening, or uncertain times."
+                promptText2="Think about any individuals who are a safe person for you to turn to when you are having a bad day or had a negative experience. Please nominate each person who comes to mind. Type in the first name of each person."
+                maxNom={10}
+                inlineText="Write name"
+                updateCurrentSelection={updateCurrentSelection}
+                id="safe_persons"
+              />
+            )}
+            {slideIndex === 1 && (
+              <NodeInputSlide
+                promptText="Some of your peers may be someone you want to stay in close proximity to, perhaps living near them or sticking by them at a social event or in class."
+                promptText2="Think about any individuals you like staying within close proximity to. Please nominate each person who comes to mind. Type in the first name of each person."
+                maxNom={10}
+                inlineText="Write name"
+                updateCurrentSelection={updateCurrentSelection}
+                id="close_proximity"
+              />
+            )}
+            {slideIndex === 2 && (
+              <NodeInputSlide
+                promptText="Some of your peers may be someone who provides you with a sense of security, which then allows you to explore and more open to new experiences."
+                promptText2="Think about any individuals who provide you with this sense of security. Please nominate each person who comes to mind. Type in the first name of each person."
+                maxNom={10}
+                inlineText="Write name"
+                updateCurrentSelection={updateCurrentSelection}
+                id="sense_of_security"
+              />
+            )}
+            {slideIndex === 3 && (
+              <NodeInputSlide
+                promptText="Some of your peers may be someone whom when they are not with you or when you are separated from them, you feel anxious or distressed."
+                promptText2="Think about any individuals whom you feel anxious or distressed when separate from them. Please nominate each person who comes to mind. Type in the first name of each person."
+                maxNom={10}
+                inlineText="Write name"
+                updateCurrentSelection={updateCurrentSelection}
+                id="anxious_or_distressed"
+              />
+            )}
+            {slideIndex === 4 && (
+              <NodeInputSlide
+                promptText="If something good happened to you that you wanted to share with someone or just wanted to spend time with someone, who would you reach out to?"
+                promptText2="Please nominate each person who comes to mind. Type in the first name of each person."
+                maxNom={10}
+                inlineText="Write name"
+                updateCurrentSelection={updateCurrentSelection}
+                id="good_happened"
+              />
+            )}
+            {slideIndex === 5 && (
+              <NodeInputSlide
+                promptText="If something bad happened to you that you wanted to share with someone or just wanted to spend time with someone, who would you reach out to?"
+                promptText2="Please nominate each person who comes to mind. Type in the first name of each person."
+                maxNom={10}
+                inlineText="Write name"
+                updateCurrentSelection={updateCurrentSelection}
+                id="bad_happened"
+              />
+            )}
+            {/* =====================================================
           
           Slides for asking which of the nominated will turn to you 
           
           =====================================================*/}
-          {slideIndex === 6 && (
-            <NodeConnect1Slide
-              promptText={
-                "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-              }
-              promptText2={
-                "Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"
-              }
-              nodeNames={selectionData[0]}
-              updateCurrentSelection={updateCurrentSelection}
-              id="safe_to_you"
-            />
-          )}
-          {slideIndex === 7 && (
-            <NodeConnect1Slide
-              promptText={
-                "These are the individual(s) you nominated as whom you feel anxious or distressed when separate from them."
-              }
-              promptText2={
-                "Which of these individuals do you think consider you as someone whom they would feel anxious or distressed if separated from?"
-              }
-              nodeNames={selectionData[1]}
-              updateCurrentSelection={updateCurrentSelection}
-              id="close_proximity_to_you"
-            />
-          )}
-          {slideIndex === 8 && (
-            <NodeConnect1Slide
-              promptText={
-                "These are the individual(s) you nominated as whom you would like to stay in close proximity to, living near or sticking by during social events."
-              }
-              promptText2={
-                "Which of these individuals do you think consider you as someone whom they would like to stay in close proximity to?"
-              }
-              nodeNames={selectionData[2]}
-              updateCurrentSelection={updateCurrentSelection}
-              id="sense_of_security_to_you"
-            />
-          )}
-          {slideIndex === 9 && (
-            <NodeConnect1Slide
-              promptText={
-                "These are the individual(s) you nominated as someone who provides you with a sense of security, which then allows you to explore and more open to new experiences."
-              }
-              promptText2={
-                "Which of these individuals do you think consider you as someone who provides them with a sense of security?"
-              }
-              nodeNames={selectionData[3]}
-              updateCurrentSelection={updateCurrentSelection}
-              id="anxious_or_distressed_to_you"
-            />
-          )}
-          {slideIndex === 10 && (
-            <NodeConnect1Slide
-              promptText={
-                "These are the individual(s) you nominated as someone you would like to tell or spend time with when something good happens to you."
-              }
-              promptText2={
-                "Which of these individuals do you think consider you as someone they would want to talk to or spend time with when something bad happens to them?"
-              }
-              nodeNames={selectionData[4]}
-              updateCurrentSelection={updateCurrentSelection}
-              id="good_happened_to_you"
-            />
-          )}
-          {slideIndex === 11 && (
-            <NodeConnect1Slide
-              promptText={
-                "These are the individual(s) you nominated as someone you would like to tell or spend time with when something bad happens to you."
-              }
-              promptText2={
-                "Which of these individuals do you think consider you as someone they would want to talk to or spend time with when something good happens to them?"
-              }
-              nodeNames={selectionData[5]}
-              updateCurrentSelection={updateCurrentSelection}
-              id="bad_happened_to_you"
-            />
-          )}
-          {/* =====================================================
+            {slideIndex === 6 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
+                }
+                promptText2={
+                  "Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"
+                }
+                nodeNames={selectionData[0]}
+                updateCurrentSelection={updateCurrentSelection}
+                id="safe_to_you"
+              />
+            )}
+            {slideIndex === 7 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as whom you feel anxious or distressed when separate from them."
+                }
+                promptText2={
+                  "Which of these individuals do you think consider you as someone whom they would feel anxious or distressed if separated from?"
+                }
+                nodeNames={selectionData[1]}
+                updateCurrentSelection={updateCurrentSelection}
+                id="close_proximity_to_you"
+              />
+            )}
+            {slideIndex === 8 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as whom you would like to stay in close proximity to, living near or sticking by during social events."
+                }
+                promptText2={
+                  "Which of these individuals do you think consider you as someone whom they would like to stay in close proximity to?"
+                }
+                nodeNames={selectionData[2]}
+                updateCurrentSelection={updateCurrentSelection}
+                id="sense_of_security_to_you"
+              />
+            )}
+            {slideIndex === 9 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as someone who provides you with a sense of security, which then allows you to explore and more open to new experiences."
+                }
+                promptText2={
+                  "Which of these individuals do you think consider you as someone who provides them with a sense of security?"
+                }
+                nodeNames={selectionData[3]}
+                updateCurrentSelection={updateCurrentSelection}
+                id="anxious_or_distressed_to_you"
+              />
+            )}
+            {slideIndex === 10 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as someone you would like to tell or spend time with when something good happens to you."
+                }
+                promptText2={
+                  "Which of these individuals do you think consider you as someone they would want to talk to or spend time with when something bad happens to them?"
+                }
+                nodeNames={selectionData[4]}
+                updateCurrentSelection={updateCurrentSelection}
+                id="good_happened_to_you"
+              />
+            )}
+            {slideIndex === 11 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as someone you would like to tell or spend time with when something bad happens to you."
+                }
+                promptText2={
+                  "Which of these individuals do you think consider you as someone they would want to talk to or spend time with when something good happens to them?"
+                }
+                nodeNames={selectionData[5]}
+                updateCurrentSelection={updateCurrentSelection}
+                id="bad_happened_to_you"
+              />
+            )}
+            {/* =====================================================
           
           Slide for connecting who knows each other out of all inputed names
           
           =====================================================*/}
-          {slideIndex === 12 && (
-            <NodeSelectionSlide
-              promptText={"These are all of the individuals you nominated."}
-              promptText2={
-                "Which of these individuals know each other? Draw a line between all individuals who know each other."
-              }
-              nodeNames={selectionData[12]}
-              updateCurrentSelection={updateCurrentSelection}
-              id="all_people"
-            />
-          )}
-          {/* =====================================================
+            {slideIndex === 12 && (
+              <NodeSelectionSlide
+                promptText={"These are all of the individuals you nominated."}
+                promptText2={
+                  "Which of these individuals know each other? Draw a line between all individuals who know each other."
+                }
+                nodeNames={selectionData[12]}
+                updateCurrentSelection={updateCurrentSelection}
+                id="all_people"
+              />
+            )}
+            {/* =====================================================
           
           Ladder slides 
           
           =====================================================*/}
-          {slideIndex === 13 && (
-            <LadderSlide
-              promptText="These are all of the individuals you nominated."
-              promptText2="Please answer the following questions about each of them"
-              nodeNames={selectionData[12]}
-              updateCurrentSelection={updateCurrentSelection}
-              id="ladder_slide"
-            />
-          )}
-          {/* =====================================================
+            {slideIndex === 13 && (
+              <LadderSlide
+                promptText="These are all of the individuals you nominated."
+                promptText2="Please answer the following questions about each of them"
+                nodeNames={selectionData[12]}
+                updateCurrentSelection={updateCurrentSelection}
+                id="ladder_slide"
+              />
+            )}
+            {/* =====================================================
           
           Survey Feedback question
           
           =====================================================*/}
-          {slideIndex === 14 && (
-            <NodeInputSlide
-              promptText="Thank you for completing the mockup."
-              promptText2="Please add any kind of feedback"
-              maxNom={100}
-              inlineText="Write name"
-              updateCurrentSelection={updateCurrentSelection}
-              id="survey_feedback"
+            {slideIndex === 14 && (
+              <NodeInputSlide
+                promptText="Thank you for completing the mockup."
+                promptText2="Please add any kind of feedback"
+                maxNom={100}
+                inlineText="Write name"
+                updateCurrentSelection={updateCurrentSelection}
+                id="survey_feedback"
+              />
+            )}
+            <NextSlideButton
+              nextBlockOverride={nextBlockOverride}
+              nextBlocked={nextBlocked}
+              onClick={handleNextSlide}
             />
-          )}
-          <NextSlideButton
-            nextBlockOverride={nextBlockOverride}
-            nextBlocked={nextBlocked}
-            onClick={handleNextSlide}
-          />
-        </>
-      ) : (
-        <>
-          <p style={{ marginTop: 100, marginLeft: 30 }}>
-            All slides have been completed.
-          </p>
-          {submittedToFirebase ? (
+          </>
+        ) : (
+          <>
             <p style={{ marginLeft: 30 }}>
-              Thank you, you can close the tab now
+              All slides have been completed.
             </p>
-          ) : (
-            <button style={{ marginLeft: 30 }} onClick={add_to_firebase}>
-              Click this button to submit
-            </button>
-          )}
-        </>
-      )}
+            {submittedToFirebase ? (
+              <p style={{ marginLeft: 30 }}>
+                Thank you, you can close the tab now
+              </p>
+            ) : (
+              <button style={{ borderRadius: 5, marginLeft: 30 }} onClick={add_to_firebase}>
+                Click this button to submit
+              </button>
+            )}
+          </>
+        )}
+      </TheSlide>
     </div>
   );
 };

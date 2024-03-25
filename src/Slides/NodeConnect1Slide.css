@@ -68,7 +68,9 @@
 }
 
 .highlighted {
-  stroke: red; /* Change the outline color to red */
-  stroke-width: 4px; /* Set the outline width */
-  fill-opacity: 0.8; /* Reduce the opacity of the fill */
+  stroke: black; /* Change the outline color to red */
+  stroke-width: 5; /* Set the outline width */
+  opacity: 0.5; /* Reduce the opacity of the fill */
+
+         
 }
