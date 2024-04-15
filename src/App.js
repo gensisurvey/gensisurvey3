@@ -214,9 +214,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={
-                  "Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"
-                }
+                promptText2={(
+                  <span>
+                    Which of these individuals do you <b>you</b> turn to as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                
                 maxNom={MAX_NOM}
                 num_to_exclude={MAX_NOM}
                 colors={colors}
@@ -238,8 +241,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[0]}</b> as a safe person when they are havslideIndex -2ng a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[0]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={0}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -253,8 +260,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[1]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[1]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={1}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -268,8 +279,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[2]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[2]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={2}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -283,8 +298,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[3]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[3]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={3}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -298,8 +317,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[4]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[4]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={4}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -313,8 +336,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[5]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[5]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={5}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -328,8 +355,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[6]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[6]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={6}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -343,8 +374,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[7]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[7]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={7}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -358,8 +393,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[8]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[8]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={8}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -373,8 +412,12 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[9]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
+                promptText2={(
+                  <span>
+                    Which of these individuals do you think <b>{selectionData.all_people[9]}</b> as a safe person when they are having a bad day or had a negative experience?
+                  </span>
+                )}
+                                maxNom={MAX_NOM}
                 num_to_exclude={9}
                 colors={colors}
                 nodeNames={selectionData.all_people}
