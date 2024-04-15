@@ -58,7 +58,7 @@ const LadderSlide = ({
             {nodeNames.map(
               (name, index) =>
                 allLadderData[index] === null && (
-                  <div className="mini-ladder-inner">
+                  <div key={(index + 5) * 367} className="mini-ladder-inner">
                     {" "}
                     <div key={(index+3)*(index + 2222)}>
                       At the top of the ladder are the people who are best off.

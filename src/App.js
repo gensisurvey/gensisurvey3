@@ -55,6 +55,7 @@ const TOTAL_SLIDES = DATA_KEYS.length;
         collection(db, "Participant_Test"),
         selectionData
       );
+      console.log(selectionData)
       console.log("Document written with ID: ", docRef.id);
       setSubmittedToFirebase(true);
     } catch (error) {
@@ -93,7 +94,7 @@ const TOTAL_SLIDES = DATA_KEYS.length;
   // Function to include skipping logic for slides based on if information is inputed
   // if there are 3 people, the slides 4-9 need to be skipped 
   const updateState = () => {
-    console.log("===============", slideIndex);
+    // console.log("===============", slideIndex);
 
     const next_data_add = { ...selectionData };
     let current_slide_index = slideIndex;
@@ -157,9 +158,9 @@ const TOTAL_SLIDES = DATA_KEYS.length;
     }
     
 
-    console.log(currentSelection);
-    console.log(next_data_add);
-    console.log(current_slide_index);
+    // console.log(currentSelection);
+    // console.log(next_data_add);
+    // console.log(current_slide_index);
     setSelectionData(next_data_add);
     setSlideIndex(current_slide_index);
     setCurrentSelection(null);

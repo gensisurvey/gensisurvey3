@@ -28,6 +28,6 @@ export default function generateColors(numColors) {
       }
       colors.push(hexColorRep);
     }
-    console.log(colors);
+    // console.log(colors);
     return colors;
   }
