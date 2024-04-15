@@ -7,6 +7,10 @@ const NodeConnect1Slide = ({
   promptText2,
   nodeNames,
   updateCurrentSelection,
+  maxNom,
+  num_to_exclude,
+  colors,
+  id,
 }) => {
   const svgRef = useRef();
   const nodeBoxRef = useRef();
@@ -16,10 +20,10 @@ const NodeConnect1Slide = ({
   // Call addBall when the component mounts
   useEffect(() => {
     if (nodeNames === null) {
-      updateCurrentSelection(null)
+      updateCurrentSelection({ key: id, data: null });
+    } else {
+      addBall();
     }
-    else { addBall();
-     }
   }, []);
 
   useEffect(() => {
@@ -43,9 +47,25 @@ const NodeConnect1Slide = ({
           !d3.select(this).classed("highlighted")
         );
         const highlightedCircles = svg.selectAll("circle.highlighted");
-        const highlightedIds = highlightedCircles.data().map(d => d.id);
-        console.log(highlightedIds)
-        updateCurrentSelection(highlightedIds);
+        const highlightedIds = highlightedCircles.data().map((d) => d.id);
+        const outputData = Array(maxNom + 1).fill(0);
+        for (let i = 0; i < nodeNames.length; i++) {
+          outputData[i] = 0;
+        }
+        outputData[maxNom] = 0;
+
+        highlightedIds.forEach((index) => {
+          if (index >= 0 && index < outputData.length) {
+            outputData[index] = 1;
+          }
+        });
+        for (let i = nodeNames.length; i < maxNom; i++) {
+          outputData[i] = null;
+        }
+        outputData[num_to_exclude] = -1;
+        console.log(outputData);
+
+        updateCurrentSelection({ key: id, data: outputData }); // Check if this line is correct
       });
 
     // Append text inside circles
@@ -65,59 +85,16 @@ const NodeConnect1Slide = ({
       .style("-ms-user-select", "none") // For IE/Edge
       .style("-webkit-tap-highlight-color", "transparent") // Disable tap highlight on mobile
       .style("z-index", 1) // Set the z-index to place the text in front of circles
-      .text((d) => {
-        // Convert friendName to first letter uppercase, rest lowercase
-        return (
-          d.friendName.charAt(0).toUpperCase() +
-          d.friendName.slice(1).toLowerCase()
-        );
-      });
+      .text((d) => d.friendName);
 
     // Clean up function to remove event listeners
     return () => {
       svg.selectAll("circle").on("click", null); // Remove click event listener from circles
     };
-
-
   }, [ballsData]);
-
-  function generateColors(numColors) {
-    const hexCharacters = [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      "A",
-      "B",
-      "C",
-      "D",
-      "E",
-      "F",
-    ];
-    const colors = [];
-
-    for (let i = 0; i < numColors; i++) {
-      let hexColorRep = "#";
-
-      for (let index = 0; index < 6; index++) {
-        const randomPosition = Math.floor(Math.random() * hexCharacters.length);
-        hexColorRep += hexCharacters[randomPosition];
-      }
-      colors.push(hexColorRep);
-    }
-    console.log(colors);
-    return colors;
-  }
 
   // Function to handle adding a new ball
   const addBall = () => {
-    const nodeColors = generateColors(nodeNames.length);
     const nodeBoxRect = nodeBoxRef.current.getBoundingClientRect();
     const centerX = nodeBoxRect.width / 2 - 10;
     const centerY = nodeBoxRect.height / 2 - 10;
@@ -137,7 +114,7 @@ const NodeConnect1Slide = ({
       newBallsData.push({
         x: parseInt(x),
         y: parseInt(y),
-        color: nodeColors[i],
+        color: colors[i],
         friendName: nodeNames[i],
         id: i,
         key: i,
@@ -145,6 +122,23 @@ const NodeConnect1Slide = ({
       });
     }
 
+    newBallsData.push({
+      x: parseInt(centerX),
+      y: parseInt(centerY),
+      color: colors[maxNom],
+      friendName: "you",
+      id: maxNom,
+      key: maxNom,
+      edges: [],
+    });
+    // console.log(newBallsData, num_to_exclude, maxNom)
+
+    if (num_to_exclude === maxNom) {
+      newBallsData.splice(newBallsData.length - 1, 1)
+    } else {
+      newBallsData.splice(num_to_exclude, 1)
+    }
+    // console.log(newBallsData)
     setBallsData(newBallsData);
   };
 

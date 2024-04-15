@@ -1,21 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // import MultipleChoiceSlide from "./Slides/MultipleChoiceSlide.js";
 // import LikertScaleSlide from "./Slides/LikertSlide.js";
 import NodeInputSlide from "./Slides/NodeInputSlide.js";
-import NodeSelectionSlide from "./Slides/NodeSelectionSlide.js";
 import NodeConnect1Slide from "./Slides/NodeConnect1Slide.js";
 import LadderSlide from "./Slides/LadderSlide.js";
 
 import NextSlideButton from "./Components/NextSlideButton.js";
 import Banner from "./Components/Banner.js";
+import TheSlide from "./Components/TheSlide.js";
+
 import BannerImg from "./Images/cornell_seal_simple_web_black.svg";
+import generateColors from "./Components/Helper.js";
 
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "./config/firestore.js";
-import TheSlide from "./Components/TheSlide.js";
 
 import "./App.css";
+import { maxIndex } from "d3";
 
 const App = () => {
   const [selectionData, setSelectionData] = useState([]);
@@ -23,53 +25,36 @@ const App = () => {
   const [slideIndex, setSlideIndex] = useState(0);
   const [nextBlocked, setNextBlocked] = useState(false);
   const [submittedToFirebase, setSubmittedToFirebase] = useState(false);
+  const [colors, setColors] = useState();
 
-  const TOTAL_SLIDES = 15;
+  const MAX_NOM = 10;
+  const DATA_KEYS = ['all_people', 'all_people_turn_to_you', 
+  'all_people_turn_to_0',
+  'all_people_turn_to_1',
+  'all_people_turn_to_2',
+  'all_people_turn_to_3',
+  'all_people_turn_to_4',
+  'all_people_turn_to_5',
+  'all_people_turn_to_6',
+  'all_people_turn_to_7',
+  'all_people_turn_to_8',
+  'all_people_turn_to_9',
+  'ladder_slide',
+  'survey_feedback',
+]
+const TOTAL_SLIDES = DATA_KEYS.length;
+
+
+  useEffect(() => {
+    setColors(generateColors(MAX_NOM + 1)); // 1 extra for 'you'
+  }, []);
 
   const add_to_firebase = async (e) => {
-    console.log({
-      safe_persons: selectionData[0],
-      close_proximity: selectionData[1],
-      sense_of_security: selectionData[2],
-      anxious_or_distressed: selectionData[3],
-      good_happened: selectionData[4],
-      bad_happened: selectionData[5],
-      safe_to_you: selectionData[6],
-      close_proximity_to_you: selectionData[7],
-      sense_of_security_to_you: selectionData[8],
-      anxious_or_distressed_to_you: selectionData[9],
-      good_happened_to_you: selectionData[10],
-      bad_happened_to_you: selectionData[11],
-      all_people: selectionData[12],
-      all_people_network:
-        selectionData === null
-          ? selectionData[13].map((item) => `(${item[0]},${item[1]})`)
-          : null,
-      ladder_data: selectionData[14],
-      survey_feedback: selectionData[15],
-    });
     try {
-      const docRef = await addDoc(collection(db, "Participant_Response"), {
-        safe_persons: selectionData[0],
-        close_proximity: selectionData[1],
-        sense_of_security: selectionData[2],
-        anxious_or_distressed: selectionData[3],
-        good_happened: selectionData[4],
-        bad_happened: selectionData[5],
-        safe_to_you: selectionData[6],
-        close_proximity_to_you: selectionData[7],
-        sense_of_security_to_you: selectionData[8],
-        anxious_or_distressed_to_you: selectionData[9],
-        good_happened_to_you: selectionData[10],
-        bad_happened_to_you: selectionData[11],
-        all_people: selectionData[12],
-        all_people_network:
-          selectionData === null
-            ? selectionData[13].map((item) => `(${item[0]},${item[1]})`)
-            : null,
-        ladder_data: selectionData[14],
-        survey_feedback: selectionData[15],
-      });
+      const docRef = await addDoc(
+        collection(db, "Participant_Test"),
+        selectionData
+      );
       console.log("Document written with ID: ", docRef.id);
       setSubmittedToFirebase(true);
     } catch (error) {
@@ -82,83 +67,105 @@ const App = () => {
     setCurrentSelection(option);
   };
 
+  // const getOutputValue = (current_person) => {
+
+  //   const size = MAX_NOM + 1;
+  //   const outputData = []
+
+  //   if (selectionData['all_people'] !== undefined){
+  //     const split = selectionData['all_people'].length
+  //     for (let i = 0; i < split; i++) {
+  //       outputData[i] = 0;
+  //     }
+  //     for (let i = split; i < size; i++) {
+  //       outputData[i] = -1;
+  //     }
+  //     outputData[current_person] = -1
+    
+  //     return outputData
+  //   }
+  //   else {
+  //     return [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+  //   }
+
+  // }
+
+  // Function to include skipping logic for slides based on if information is inputed
+  // if there are 3 people, the slides 4-9 need to be skipped 
   const updateState = () => {
     console.log("===============", slideIndex);
 
-    let next_data_add = [...selectionData, currentSelection];
-    let next_slide_index = slideIndex;
+    const next_data_add = { ...selectionData };
+    let current_slide_index = slideIndex;
 
-    if (next_slide_index === 5 && next_data_add[0] === null) {
-      next_slide_index += 1;
-      next_data_add.push(null);
-    }
-    if (next_slide_index === 6 && next_data_add[1] === null) {
-      next_slide_index += 1;
-      next_data_add.push(null);
-    }
-    if (next_slide_index === 7 && next_data_add[2] === null) {
-      next_slide_index += 1;
-      next_data_add.push(null);
-    }
-    if (next_slide_index === 8 && next_data_add[3] === null) {
-      next_slide_index += 1;
-      next_data_add.push(null);
-    }
-    if (next_slide_index === 9 && next_data_add[4] === null) {
-      next_slide_index += 1;
-      next_data_add.push(null);
-    }
-    if (next_slide_index === 10 && next_data_add[5] === null) {
-      next_slide_index += 1;
-      next_data_add.push(null);
-    }
-    if (next_slide_index === 11) {
-      // This data needs to be saved manually before the every nominated person slide
 
-      let listsToConcatenate = [
-        next_data_add[0],
-        next_data_add[1],
-        next_data_add[2],
-        next_data_add[3],
-        next_data_add[4],
-        next_data_add[5],
-      ].filter((list) => list !== null);
-      let concatenatedList = [].concat(...listsToConcatenate);
-      const no_dup = [...new Set(concatenatedList)];
-
-      if (no_dup.length <= 1) {
-        next_slide_index += 1;
-        next_data_add.push(no_dup);
-        next_data_add.push(null);
-      } else {
-        next_data_add.push(no_dup);
-      }
+    if (currentSelection === null) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    } else {
+      next_data_add[currentSelection.key] = currentSelection.data;
     }
-    if (next_slide_index === 12 && next_data_add[12].length < 1) {
-      next_slide_index += 1;
-      next_data_add.push(null);
+    current_slide_index += 1;
+
+    if (current_slide_index === 1 && next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 2 && next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 3 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 1) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 4 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 2) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 5 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 3) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 6 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 4) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 7 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 5) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 8 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 6) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 9 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 7) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 10 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 8) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    if (current_slide_index === 11 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 9) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
     }
 
-    next_slide_index += 1;
+    if (current_slide_index === 12 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11) ) {
+      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      current_slide_index += 1;
+    }
+    
+
     console.log(currentSelection);
     console.log(next_data_add);
-    console.log(next_slide_index);
+    console.log(current_slide_index);
     setSelectionData(next_data_add);
-    setSlideIndex(next_slide_index);
+    setSlideIndex(current_slide_index);
     setCurrentSelection(null);
   };
 
   const handleNextSlide = () => {
-    // if ( // add here to REMOVE next button stopping effect
-    //   slideIndex === 6 ||
-    //   slideIndex === 7 ||
-    //   slideIndex === 8 ||
-    //   slideIndex === 9 ||
-    //   slideIndex === 10 ||
-    //   slideIndex === 11
-    // ) {
-    //   updateState()
-    // } else
     if (currentSelection !== null) {
       updateState();
     } else {
@@ -177,59 +184,6 @@ const App = () => {
     <div className="app-box">
       <Banner logo={BannerImg} text={"Cornell University"} />
       <TheSlide>
-      <LadderSlide
-              promptText="LADDER SLIDE"
-              promptText2="Please answer the following questions about each of them"
-              nodeNames={['0', '1', '2', '3', '4', '5']}
-              updateCurrentSelection={updateCurrentSelection}
-              id="ladder_slide"
-            />
-     
-        {/* 
-         < NodeConnect1Slide
-              promptText={
-                " NODE SELECT 1 SLIDE"
-              }
-              promptText2={
-                "Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"
-              }
-              nodeNames={['tammy', 'amanda']}
-              updateCurrentSelection={updateCurrentSelection}
-              id="safe_to_you"
-            />
-      <LadderSlide
-              promptText="LADDER SLIDE"
-              promptText2="Please answer the following questions about each of them"
-              nodeNames={['0', '1', '2', '3', '4', '5']}
-              updateCurrentSelection={updateCurrentSelection}
-              id="ladder_slide"
-            />
-      <NodeSelectionSlide
-              promptText="NODE SELECTION SLIDE"
-              promptText2="Please answer the following questions about each of them"
-              nodeNames={['0', '1', '2', '3', '4', '5']}
-              updateCurrentSelection={updateCurrentSelection}
-              id="ladder_slide"
-            />
-       < NodeConnect1Slide
-              promptText={
-                " NODE SELECT 1 SLIDE"
-              }
-              promptText2={
-                "Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"
-              }
-              nodeNames={['tammy', 'amanda']}
-              updateCurrentSelection={updateCurrentSelection}
-              id="safe_to_you"
-            />
-        <NodeInputSlide
-              promptText="nODE INPUT SLIDE"
-              promptText2="Think about any individuals who are a safe person for you to turn to when you are having a bad day or had a negative experience. Please nominate each person who comes to mind. Type in the first name of each person."
-              maxNom={10}
-              inlineText="Write name"
-              updateCurrentSelection={updateCurrentSelection}
-              id="safe_persons"
-            /> */}
         {slideIndex < TOTAL_SLIDES ? (
           <>
             {/* =====================================================
@@ -241,60 +195,13 @@ const App = () => {
               <NodeInputSlide
                 promptText="Some of your peers may be a safe person for you to turn to, during challenging, threatening, or uncertain times."
                 promptText2="Think about any individuals who are a safe person for you to turn to when you are having a bad day or had a negative experience. Please nominate each person who comes to mind. Type in the first name of each person."
-                maxNom={10}
+                specialInstructions="NOTE: Please add initials to duplicate names, the bar will flash if a duplicate is detected"
+                maxNom={MAX_NOM}
+                colors={colors}
                 inlineText="Write name"
                 updateCurrentSelection={updateCurrentSelection}
-                id="safe_persons"
-              />
-            )}
-            {slideIndex === 1 && (
-              <NodeInputSlide
-                promptText="Some of your peers may be someone you want to stay in close proximity to, perhaps living near them or sticking by them at a social event or in class."
-                promptText2="Think about any individuals you like staying within close proximity to. Please nominate each person who comes to mind. Type in the first name of each person."
-                maxNom={10}
-                inlineText="Write name"
-                updateCurrentSelection={updateCurrentSelection}
-                id="close_proximity"
-              />
-            )}
-            {slideIndex === 2 && (
-              <NodeInputSlide
-                promptText="Some of your peers may be someone who provides you with a sense of security, which then allows you to explore and more open to new experiences."
-                promptText2="Think about any individuals who provide you with this sense of security. Please nominate each person who comes to mind. Type in the first name of each person."
-                maxNom={10}
-                inlineText="Write name"
-                updateCurrentSelection={updateCurrentSelection}
-                id="sense_of_security"
-              />
-            )}
-            {slideIndex === 3 && (
-              <NodeInputSlide
-                promptText="Some of your peers may be someone whom when they are not with you or when you are separated from them, you feel anxious or distressed."
-                promptText2="Think about any individuals whom you feel anxious or distressed when separate from them. Please nominate each person who comes to mind. Type in the first name of each person."
-                maxNom={10}
-                inlineText="Write name"
-                updateCurrentSelection={updateCurrentSelection}
-                id="anxious_or_distressed"
-              />
-            )}
-            {slideIndex === 4 && (
-              <NodeInputSlide
-                promptText="If something good happened to you that you wanted to share with someone or just wanted to spend time with someone, who would you reach out to?"
-                promptText2="Please nominate each person who comes to mind. Type in the first name of each person."
-                maxNom={10}
-                inlineText="Write name"
-                updateCurrentSelection={updateCurrentSelection}
-                id="good_happened"
-              />
-            )}
-            {slideIndex === 5 && (
-              <NodeInputSlide
-                promptText="If something bad happened to you that you wanted to share with someone or just wanted to spend time with someone, who would you reach out to?"
-                promptText2="Please nominate each person who comes to mind. Type in the first name of each person."
-                maxNom={10}
-                inlineText="Write name"
-                updateCurrentSelection={updateCurrentSelection}
-                id="bad_happened"
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
               />
             )}
             {/* =====================================================
@@ -302,7 +209,7 @@ const App = () => {
           Slides for asking which of the nominated will turn to you 
           
           =====================================================*/}
-            {slideIndex === 6 && (
+            {slideIndex === 1 && (
               <NodeConnect1Slide
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
@@ -310,104 +217,202 @@ const App = () => {
                 promptText2={
                   "Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"
                 }
-                nodeNames={selectionData[0]}
+                maxNom={MAX_NOM}
+                num_to_exclude={MAX_NOM}
+                colors={colors}
+                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                id="safe_to_you"
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
+              />
+            )}
+
+            {/* =====================================================
+          
+          Slides asking who your friends turn to
+          
+          =====================================================*/}
+
+            {slideIndex === 2 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
+                }
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[0]}</b> as a safe person when they are havslideIndex -2ng a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={0}
+                colors={colors}
+                nodeNames={selectionData.all_people}
+                updateCurrentSelection={updateCurrentSelection}
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
+              />
+            )}
+            {slideIndex === 3 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
+                }
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[1]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={1}
+                colors={colors}
+                nodeNames={selectionData.all_people}
+                updateCurrentSelection={updateCurrentSelection}
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
+              />
+            )}
+            {slideIndex === 4 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
+                }
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[2]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={2}
+                colors={colors}
+                nodeNames={selectionData.all_people}
+                updateCurrentSelection={updateCurrentSelection}
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
+              />
+            )}
+            {slideIndex === 5 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
+                }
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[3]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={3}
+                colors={colors}
+                nodeNames={selectionData.all_people}
+                updateCurrentSelection={updateCurrentSelection}
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
+              />
+            )}
+            {slideIndex === 6 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
+                }
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[4]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={4}
+                colors={colors}
+                nodeNames={selectionData.all_people}
+                updateCurrentSelection={updateCurrentSelection}
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
               />
             )}
             {slideIndex === 7 && (
               <NodeConnect1Slide
                 promptText={
-                  "These are the individual(s) you nominated as whom you feel anxious or distressed when separate from them."
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={
-                  "Which of these individuals do you think consider you as someone whom they would feel anxious or distressed if separated from?"
-                }
-                nodeNames={selectionData[1]}
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[5]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={5}
+                colors={colors}
+                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                id="close_proximity_to_you"
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
               />
             )}
             {slideIndex === 8 && (
               <NodeConnect1Slide
                 promptText={
-                  "These are the individual(s) you nominated as whom you would like to stay in close proximity to, living near or sticking by during social events."
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={
-                  "Which of these individuals do you think consider you as someone whom they would like to stay in close proximity to?"
-                }
-                nodeNames={selectionData[2]}
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[6]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={6}
+                colors={colors}
+                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                id="sense_of_security_to_you"
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
               />
             )}
             {slideIndex === 9 && (
               <NodeConnect1Slide
                 promptText={
-                  "These are the individual(s) you nominated as someone who provides you with a sense of security, which then allows you to explore and more open to new experiences."
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={
-                  "Which of these individuals do you think consider you as someone who provides them with a sense of security?"
-                }
-                nodeNames={selectionData[3]}
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[7]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={7}
+                colors={colors}
+                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                id="anxious_or_distressed_to_you"
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
               />
             )}
             {slideIndex === 10 && (
               <NodeConnect1Slide
                 promptText={
-                  "These are the individual(s) you nominated as someone you would like to tell or spend time with when something good happens to you."
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={
-                  "Which of these individuals do you think consider you as someone they would want to talk to or spend time with when something bad happens to them?"
-                }
-                nodeNames={selectionData[4]}
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[8]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={8}
+                colors={colors}
+                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                id="good_happened_to_you"
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
               />
             )}
             {slideIndex === 11 && (
               <NodeConnect1Slide
                 promptText={
-                  "These are the individual(s) you nominated as someone you would like to tell or spend time with when something bad happens to you."
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={
-                  "Which of these individuals do you think consider you as someone they would want to talk to or spend time with when something good happens to them?"
-                }
-                nodeNames={selectionData[5]}
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[9]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={9}
+                colors={colors}
+                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                id="bad_happened_to_you"
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
               />
             )}
-            {/* =====================================================
-          
-          Slide for connecting who knows each other out of all inputed names
-          
-          =====================================================*/}
-            {slideIndex === 12 && (
-              <NodeSelectionSlide
-                promptText={"These are all of the individuals you nominated."}
-                promptText2={
-                  "Which of these individuals know each other? Draw a line between all individuals who know each other."
+            {/* {slideIndex === 12 && (
+              <NodeConnect1Slide
+                promptText={
+                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                nodeNames={selectionData[12]}
+                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[10]}</b> as a safe person when they are having a bad day or had a negative experience?`}
+                maxNom={MAX_NOM}
+                num_to_exclude={10}
+                colors={colors}
+                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                id="all_people"
+                id="all_people_turn_to_10"
+                key="all_people_turn_to_10"
               />
-            )}
+            )} */}
+
             {/* =====================================================
           
           Ladder slides 
           
           =====================================================*/}
-            {slideIndex === 13 && (
+            {slideIndex === 12 && (
               <LadderSlide
                 promptText="These are all of the individuals you nominated."
                 promptText2="Please answer the following questions about each of them"
-                nodeNames={selectionData[12]}
+                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                id="ladder_slide"
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
+
               />
             )}
             {/* =====================================================
@@ -415,14 +420,16 @@ const App = () => {
           Survey Feedback question
           
           =====================================================*/}
-            {slideIndex === 14 && (
+            {slideIndex === 13 && (
               <NodeInputSlide
                 promptText="Thank you for completing the mockup."
                 promptText2="Please add any kind of feedback"
                 maxNom={100}
                 inlineText="Write name"
                 updateCurrentSelection={updateCurrentSelection}
-                id="survey_feedback"
+                key={DATA_KEYS[slideIndex]}
+                id={DATA_KEYS[slideIndex]}
+                include_svg={false}
               />
             )}
             <NextSlideButton
@@ -433,18 +440,25 @@ const App = () => {
           </>
         ) : (
           <>
-            <p style={{ marginLeft: 30 }}>
-              All slides have been completed.
-            </p>
+            <p style={{ marginLeft: 30 }}>All slides have been completed.</p>
             {submittedToFirebase ? (
               <p style={{ marginLeft: 30 }}>
                 Thank you, you can close the tab now
               </p>
             ) : (
-              <button style={{ borderRadius: 5, marginLeft: 30 }} onClick={add_to_firebase}>
+              <button
+                style={{ borderRadius: 5, marginLeft: 30 }}
+                onClick={add_to_firebase}
+              >
                 Click this button to submit
               </button>
             )}
+            {/* <button id="test-button"
+              style={{ borderRadius: 5, marginLeft: 30 }}
+              onClick={handletestclick}
+            >
+              test button
+            </button> */}
           </>
         )}
       </TheSlide>

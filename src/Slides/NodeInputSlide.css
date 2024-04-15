@@ -69,9 +69,11 @@ button:hover {
 .add-flash {
   /* animation: flashRed 1s infinite; Change '0.5s' to adjust the animation duration */
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 0px;
   background-color: #f9f9f9;
   box-shadow: 0 0 5px rgb(238, 29, 186);
+  
+
 }
 
 .max-items-reached {

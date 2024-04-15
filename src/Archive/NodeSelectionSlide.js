@@ -81,7 +81,7 @@ const NodeSelectionSlide = ({
       .style("-moz-user-select", "none") // For Firefox
       .style("-ms-user-select", "none") // For IE/Edge
       .style("-webkit-tap-highlight-color", "transparent") // Disable tap highlight on mobile
-      .style("z-index", 1) // Set the z-index to place the text in front of circles
+      .style("z-index", 10) // Set the z-index to place the text in front of circles
       .text((d) => {
         // Convert friendName to first letter uppercase, rest lowercase
         return (

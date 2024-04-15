@@ -1,4 +1,3 @@
-
 .ladder-text-wrapper {
   position: relative;
   padding: 0 10px 10px 20px;
@@ -23,47 +22,59 @@
 .mini-ladder-wrapper {
   display: flex;
   flex-wrap: wrap; /* Allow items to wrap to the next row */
-  gap: 10px; /* Adjust the gap between items as needed */
   justify-content: center;
+  align-items: center;
+  margin: 0 100px 0 100px
 }
 
 .ladder-mini-box {
-  /* position: flex;
-  justify-content: center; */
-
-  margin: 10px 10px 10px 10px;
-  /* margin-right: 5%;
-  margin-left: 5%;  */
-
+  /* position: relative; Ensure relative positioning for absolute children */
+  position: relative;
   width: 200px;
-  /* max-width: 23%; */
-
   padding: 25px;
-  padding-top: 15px;
-
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-  /* @media all and (min-width: 900px) {
-      max-width: 1000em;
-    } */
+  margin: 20px;
 }
 
-.ladder-img-container {
-  flex: 0 0 auto;
+.mini-ladder-item {
+  justify-content: center;
+  align-items: center;
+}
+
+.mini-ladder-inner{
+  display: flex;
+  flex-direction: column; /* If the element should be centered vertically */
+  align-items: center; /* Center horizontally */
+  
+}
+
+.ladder-svg-box {
+  position: relative; /* Ensure relative positioning for absolute children */
+  width: 100%;
+  height: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.ladder-svg {
+  position: relative;
+  height: auto; /* Automatically adjust height based on content */
+  width: 50%;
+  z-index: 5; /* Send the container to the background */
 }
 
 .ladder-img {
   position: relative;
-  height: 40px; /* Adjust height as needed */
-  width: auto; /* Maintain aspect ratio */
-  left: -10px;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Send the container to the background */
 }
 
 .ladder-input {
-  flex: 0 0 auto;
-
+  position: relative;
   max-height: 30px;
   max-width: 80px;
   margin: 0;
@@ -75,7 +86,6 @@
 }
 
 .add-flash {
-  /* animation: flashRed 1s infinite; Change '0.5s' to adjust the animation duration */
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: #f9f9f9;
