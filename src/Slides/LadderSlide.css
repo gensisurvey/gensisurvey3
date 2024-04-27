@@ -76,9 +76,15 @@
 .ladder-input {
   position: relative;
   max-height: 30px;
-  max-width: 80px;
+  max-width: 110px;
   margin: 0;
-  border-radius: 5px;
+  /* border-radius: 5px; */
+
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+  
 }
 
 .ladder-button {

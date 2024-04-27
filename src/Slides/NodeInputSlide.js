@@ -162,6 +162,7 @@ const NodeInputSlide = ({
       </div>
       <form className={flash ? "add-flash" : ""} onSubmit={handleSubmit}>
         <input
+        className="node-input"
           type="text"
           value={inputValue}
           onChange={handleChange}

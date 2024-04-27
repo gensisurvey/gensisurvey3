@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-// import MultipleChoiceSlide from "./Slides/MultipleChoiceSlide.js";
+import MultipleChoiceSlide from "./Slides/MultipleChoiceSlide.js";
 // import LikertScaleSlide from "./Slides/LikertSlide.js";
 import NodeInputSlide from "./Slides/NodeInputSlide.js";
 import NodeConnect1Slide from "./Slides/NodeConnect1Slide.js";
@@ -22,28 +22,30 @@ import { maxIndex } from "d3";
 const App = () => {
   const [selectionData, setSelectionData] = useState([]);
   const [currentSelection, setCurrentSelection] = useState(null);
-  const [slideIndex, setSlideIndex] = useState(0);
+  const [slideIndex, setSlideIndex] = useState(-1); // STARTING SLIDE INDEX (-1 for conset slide)
   const [nextBlocked, setNextBlocked] = useState(false);
   const [submittedToFirebase, setSubmittedToFirebase] = useState(false);
   const [colors, setColors] = useState();
 
   const MAX_NOM = 10;
-  const DATA_KEYS = ['all_people', 'all_people_turn_to_you', 
-  'all_people_turn_to_0',
-  'all_people_turn_to_1',
-  'all_people_turn_to_2',
-  'all_people_turn_to_3',
-  'all_people_turn_to_4',
-  'all_people_turn_to_5',
-  'all_people_turn_to_6',
-  'all_people_turn_to_7',
-  'all_people_turn_to_8',
-  'all_people_turn_to_9',
-  'ladder_slide',
-  'survey_feedback',
-]
-const TOTAL_SLIDES = DATA_KEYS.length;
-
+  const DATA_KEYS = [
+    "all_people",
+    "all_people_turn_to_you",
+    "all_people_turn_to_0",
+    "all_people_turn_to_1",
+    "all_people_turn_to_2",
+    "all_people_turn_to_3",
+    "all_people_turn_to_4",
+    "all_people_turn_to_5",
+    "all_people_turn_to_6",
+    "all_people_turn_to_7",
+    "all_people_turn_to_8",
+    "all_people_turn_to_9",
+    "ladder_slide",
+    "survey_feedback",
+  ];
+  const TOTAL_SLIDES = DATA_KEYS.length + 1; // added 1 for demographics,
+  const TESTING_MODE = true;
 
   useEffect(() => {
     setColors(generateColors(MAX_NOM + 1)); // 1 extra for 'you'
@@ -55,7 +57,11 @@ const TOTAL_SLIDES = DATA_KEYS.length;
         collection(db, "Participant_Test"),
         selectionData
       );
-      console.log(selectionData)
+
+      if (TESTING_MODE) {
+        console.log(selectionData);
+      }
+
       console.log("Document written with ID: ", docRef.id);
       setSubmittedToFirebase(true);
     } catch (error) {
@@ -63,104 +69,214 @@ const TOTAL_SLIDES = DATA_KEYS.length;
     }
   };
 
+  const updateCurrentSelectionLikertMult = (option) => {
+    const next_data_add = { ...selectionData };
+
+    next_data_add[option.key] = option.data;
+
+    setSelectionData(next_data_add);
+    // setSlideIndex(current_slide_index);
+    // setCurrentSelection(null);
+    console.log(next_data_add)
+
+  }
+
   const updateCurrentSelection = (option) => {
     setNextBlocked(false);
     setCurrentSelection(option);
+
+    if (TESTING_MODE) {
+      console.log(option);
+    }
   };
 
-  // const getOutputValue = (current_person) => {
-
-  //   const size = MAX_NOM + 1;
-  //   const outputData = []
-
-  //   if (selectionData['all_people'] !== undefined){
-  //     const split = selectionData['all_people'].length
-  //     for (let i = 0; i < split; i++) {
-  //       outputData[i] = 0;
-  //     }
-  //     for (let i = split; i < size; i++) {
-  //       outputData[i] = -1;
-  //     }
-  //     outputData[current_person] = -1
-    
-  //     return outputData
-  //   }
-  //   else {
-  //     return [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-  //   }
-
-  // }
-
   // Function to include skipping logic for slides based on if information is inputed
-  // if there are 3 people, the slides 4-9 need to be skipped 
+  // if there are 3 people, the slides 4-9 need to be skipped
   const updateState = () => {
     // console.log("===============", slideIndex);
 
     const next_data_add = { ...selectionData };
     let current_slide_index = slideIndex;
 
+    if (slideIndex === -1 && currentSelection === null) {
+      current_slide_index = TOTAL_SLIDES;
+      setSubmittedToFirebase(true);
+    }
+    else if (slideIndex === -1 && currentSelection.data === "no") {
+      current_slide_index = TOTAL_SLIDES;
+      setSubmittedToFirebase(true);
+    } 
 
     if (currentSelection === null) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
     } else {
       next_data_add[currentSelection.key] = currentSelection.data;
     }
     current_slide_index += 1;
 
-    if (current_slide_index === 1 && next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 1 &&
+      next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 2 && next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 2 &&
+      next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 3 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 1) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 3 &&
+      (next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11 ||
+        next_data_add["all_people"].length <= 1)
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 4 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 2) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 4 &&
+      (next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11 ||
+        next_data_add["all_people"].length <= 2)
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 5 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 3) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 5 &&
+      (next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11 ||
+        next_data_add["all_people"].length <= 3)
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 6 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 4) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 6 &&
+      (next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11 ||
+        next_data_add["all_people"].length <= 4)
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 7 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 5) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 7 &&
+      (next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11 ||
+        next_data_add["all_people"].length <= 5)
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 8 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 6) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 8 &&
+      (next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11 ||
+        next_data_add["all_people"].length <= 6)
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 9 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 7) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 9 &&
+      (next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11 ||
+        next_data_add["all_people"].length <= 7)
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 10 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 8) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 10 &&
+      (next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11 ||
+        next_data_add["all_people"].length <= 8)
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    if (current_slide_index === 11 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11 || next_data_add['all_people'].length <= 9) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 11 &&
+      (next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11 ||
+        next_data_add["all_people"].length <= 9)
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
 
-    if (current_slide_index === 12 && (next_data_add['all_people'].reduce((total, current) => total + current, 0) === -11) ) {
-      next_data_add[DATA_KEYS[current_slide_index]] =  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+    if (
+      current_slide_index === 12 &&
+      next_data_add["all_people"].reduce(
+        (total, current) => total + current,
+        0
+      ) === -11
+    ) {
+      next_data_add[DATA_KEYS[current_slide_index]] = [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ];
       current_slide_index += 1;
     }
-    
 
-    // console.log(currentSelection);
-    // console.log(next_data_add);
-    // console.log(current_slide_index);
+    if (TESTING_MODE) {
+      console.log(currentSelection);
+      console.log(next_data_add);
+      console.log(current_slide_index);
+    }
+
     setSelectionData(next_data_add);
     setSlideIndex(current_slide_index);
     setCurrentSelection(null);
@@ -185,8 +301,51 @@ const TOTAL_SLIDES = DATA_KEYS.length;
     <div className="app-box">
       <Banner logo={BannerImg} text={"Cornell University"} />
       <TheSlide>
+        {
+          <>
+            <MultipleChoiceSlide
+              question={"Please indicate your race/ethnicity:"}
+              options={["White",
+                "Hispanic or Latino",
+                "Black or African American",
+                "Native American or American Indian",
+                "Asian/Pacific Islander",
+              ]}
+              add_other_option={true}
+              checkbox={true}
+              updateCurrentSelection={updateCurrentSelectionLikertMult}
+              key={"Ethnicity"}
+              id={"Ethnicity"}
+            />
+            <MultipleChoiceSlide
+              question={"What is your gender?"}
+              options={["Man", "Woman"]}
+              add_other_option={true}
+              checkbox={false}
+              updateCurrentSelection={updateCurrentSelectionLikertMult}
+              key={"Gender"}
+              id={"Gender"}
+            />
+          </>
+        }
         {slideIndex < TOTAL_SLIDES ? (
           <>
+            {/* =====================================================
+          
+          Consent
+          
+          =====================================================*/}
+
+            {slideIndex === -1 && (
+              <MultipleChoiceSlide
+                question={"Do you consent to participating in this study?"}
+                options={["yes", "no"]}
+                updateCurrentSelection={updateCurrentSelection}
+                key={"consent"}
+                id={"consent"}
+              />
+            )}
+
             {/* =====================================================
           
           Slides for inputing names into different categories 
@@ -215,12 +374,13 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you <b>you</b> turn to as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you <b>you</b> turn to as a
+                    safe person when they are having a bad day or had a negative
+                    experience?
                   </span>
-                )}
-                
+                }
                 maxNom={MAX_NOM}
                 num_to_exclude={MAX_NOM}
                 colors={colors}
@@ -242,12 +402,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[0]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[0]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={0}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -261,12 +423,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[1]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[1]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={1}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -280,12 +444,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[2]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[2]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={2}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -299,12 +465,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[3]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[3]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={3}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -318,12 +486,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[4]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[4]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={4}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -337,12 +507,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[5]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[5]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={5}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -356,12 +528,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[6]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[6]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={6}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -375,12 +549,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[7]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[7]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={7}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -394,12 +570,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[8]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[8]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={8}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -413,12 +591,14 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 promptText={
                   "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
                 }
-                promptText2={(
+                promptText2={
                   <span>
-                    Which of these individuals do you think <b>{selectionData.all_people[9]}</b> as a safe person when they are having a bad day or had a negative experience?
+                    Which of these individuals do you think{" "}
+                    <b>{selectionData.all_people[9]}</b> as a safe person when
+                    they are having a bad day or had a negative experience?
                   </span>
-                )}
-                                maxNom={MAX_NOM}
+                }
+                maxNom={MAX_NOM}
                 num_to_exclude={9}
                 colors={colors}
                 nodeNames={selectionData.all_people}
@@ -427,21 +607,6 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 id={DATA_KEYS[slideIndex]}
               />
             )}
-            {/* {slideIndex === 12 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={`Which of these individuals do you think <b>${selectionData.all_people[10]}</b> as a safe person when they are having a bad day or had a negative experience?`}
-                maxNom={MAX_NOM}
-                num_to_exclude={10}
-                colors={colors}
-                nodeNames={selectionData.all_people}
-                updateCurrentSelection={updateCurrentSelection}
-                id="all_people_turn_to_10"
-                key="all_people_turn_to_10"
-              />
-            )} */}
 
             {/* =====================================================
           
@@ -456,15 +621,22 @@ const TOTAL_SLIDES = DATA_KEYS.length;
                 updateCurrentSelection={updateCurrentSelection}
                 key={DATA_KEYS[slideIndex]}
                 id={DATA_KEYS[slideIndex]}
-
               />
             )}
+
+            {/* =====================================================
+          
+               Demographics slides
+
+          =====================================================*/}
+            {slideIndex === 13 && <div></div>}
+
             {/* =====================================================
           
           Survey Feedback question
           
           =====================================================*/}
-            {slideIndex === 13 && (
+            {slideIndex === 14 && (
               <NodeInputSlide
                 promptText="Thank you for completing the mockup."
                 promptText2="Please add any kind of feedback"

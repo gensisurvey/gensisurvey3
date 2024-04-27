@@ -28,7 +28,7 @@ form {
 
 }
 
-input[type="text"] {
+.node-input {
   flex: 1;
   padding: 8px;
   border: 1px solid #ccc;
