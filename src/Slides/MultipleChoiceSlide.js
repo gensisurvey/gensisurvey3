@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./MultipleChoiceSlide.css";
 
 const MultipleChoiceSlide = ({
@@ -13,7 +13,9 @@ const MultipleChoiceSlide = ({
   const [otherSelected, setOtherSelected] = useState(false);
   const [otherValue, setOtherValue] = useState("Other");
 
-
+  useEffect(() => {
+    updateCurrentSelection({ key: id, data: null, override:false, nextBlocked: true}); // Check if this line is correct
+  }, []);
 
   const handleOptionSelectNormal = ([choice, other_bool]) => {
     if (other_bool) {
@@ -23,14 +25,14 @@ const MultipleChoiceSlide = ({
     }
 
     setSelectedOption(choice);
-      updateCurrentSelection({ key: id, data: choice });
+      updateCurrentSelection({ key: id, data: choice, override:false, nextBlocked:false });
   };
 
   
   const handleCustomInputChangeNormal = (event) => {
     const customValue = event.target.value;
     setSelectedOption(customValue);
-    updateCurrentSelection({ key: id, data: customValue });
+    updateCurrentSelection({ key: id, data: customValue, override:false, nextBlocked:false });
   };
 
   const handleOptionSelectCheckBox = (choice) => {
@@ -49,11 +51,11 @@ const MultipleChoiceSlide = ({
     if (otherSelected) {
       newSelected = newSelected.filter((item) => item !== 'Other');
       newSelected.push(otherValue)
-      updateCurrentSelection({ key: id, data: newSelected })
+      updateCurrentSelection({ key: id, data: newSelected, override:false, nextBlocked:false })
 
     }
     else {
-      updateCurrentSelection({ key: id, data: newSelected })
+      updateCurrentSelection({ key: id, data: newSelected, override:false, nextBlocked:false })
 
     }
   };
@@ -72,7 +74,7 @@ const MultipleChoiceSlide = ({
     }
 
     setSelectedOption(newSelected)
-    updateCurrentSelection({ key: id, data: newSelected })
+    updateCurrentSelection({ key: id, data: newSelected, override:false, nextBlocked:false })
     setOtherSelected(!otherSelected)
   }
 
@@ -85,7 +87,7 @@ const MultipleChoiceSlide = ({
     newSelected = newSelected.filter((item) => item !== 'Other');
 
 
-    updateCurrentSelection({ key: id, data: newSelected });
+    updateCurrentSelection({ key: id, data: newSelected, override:false, nextBlocked:false });
   };
   
 

@@ -19,9 +19,26 @@ const NodeConnect1Slide = ({
 
   // Call addBall when the component mounts
   useEffect(() => {
-    if (nodeNames === null) {
-      updateCurrentSelection({ key: id, data: null });
-    } else {
+    if (nodeNames.reduce(
+      (total, current) => total + current,
+      0
+    ) === -11 || (nodeNames.length <= num_to_exclude && num_to_exclude !== maxNom)) {
+      updateCurrentSelection({ key: id, data: [
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+      ] , override:true, nextBlocked:false});
+    } else { 
+      const outputData = Array(maxNom + 1).fill(0);
+        for (let i = 0; i < nodeNames.length; i++) {
+          outputData[i] = 0;
+        }
+        outputData[maxNom] = 0;
+        for (let i = nodeNames.length; i < maxNom; i++) {
+          outputData[i] = null;
+        }
+        outputData[num_to_exclude] = -1;
+        // console.log(outputData);
+
+        updateCurrentSelection({ key: id, data: outputData, override:false, nextBlocked:true }); // Check if this line is correct
       addBall();
     }
   }, []);
@@ -63,9 +80,9 @@ const NodeConnect1Slide = ({
           outputData[i] = null;
         }
         outputData[num_to_exclude] = -1;
-        console.log(outputData);
+        // console.log(outputData);
 
-        updateCurrentSelection({ key: id, data: outputData }); // Check if this line is correct
+        updateCurrentSelection({ key: id, data: outputData, override:false, nextBlocked:false }); // Check if this line is correct
       });
 
     // Append text inside circles

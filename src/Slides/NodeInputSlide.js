@@ -24,9 +24,11 @@ const NodeInputSlide = ({
   const svgRef = useRef();
   const nodeBoxRef = useRef();
 
-  // useEffect(() => {
-  //   updateCurrentSelection({key: id, data:null}); // Check if this line is correct
-  // }, []);
+  useEffect(() => {
+    updateCurrentSelection({key: id, data:[
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    ], override:false, nextBlocked:true})
+  }, []);
 
 
   const handleChange = (e) => {
@@ -49,12 +51,14 @@ const NodeInputSlide = ({
       setInputValue("");
 
       
-      updateCurrentSelection({key: id, data:[...names, inputValue]}); // Check if this line is correct
+      updateCurrentSelection({key: id, data:[...names, inputValue], override:false, nextBlocked:false}); // Check if this line is correct
 
 
       
     }
   };
+
+  
 
   useEffect(() => {
     // Your existing code for initial setup
@@ -124,34 +128,6 @@ const NodeInputSlide = ({
     };}
   }, [names]);
   
-
-  function generateColor() {
-    const hexCharacters = [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      "A",
-      "B",
-      "C",
-      "D",
-      "E",
-      "F",
-    ];
-    let hexColorRep = "#"
-    for (let index = 0; index < 6; index++) {
-      const randomPosition = Math.floor(Math.random() * hexCharacters.length);
-      hexColorRep += hexCharacters[randomPosition];
-    }
-    return hexColorRep;
-  }
-
   return (
     <>
       <div className="node-input-text-wrapper">

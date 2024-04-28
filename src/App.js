@@ -10,6 +10,8 @@ import NextSlideButton from "./Components/NextSlideButton.js";
 import Banner from "./Components/Banner.js";
 import TheSlide from "./Components/TheSlide.js";
 
+// import NodeSelectionSlide from "./Archive/NodeSelectionSlide.js"
+
 import BannerImg from "./Images/cornell_seal_simple_web_black.svg";
 import generateColors from "./Components/Helper.js";
 
@@ -17,7 +19,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from "./config/firestore.js";
 
 import "./App.css";
-import { maxIndex } from "d3";
+// import { maxIndex } from "d3";
 
 const App = () => {
   const [selectionData, setSelectionData] = useState([]);
@@ -28,23 +30,8 @@ const App = () => {
   const [colors, setColors] = useState();
 
   const MAX_NOM = 10;
-  const DATA_KEYS = [
-    "all_people",
-    "all_people_turn_to_you",
-    "all_people_turn_to_0",
-    "all_people_turn_to_1",
-    "all_people_turn_to_2",
-    "all_people_turn_to_3",
-    "all_people_turn_to_4",
-    "all_people_turn_to_5",
-    "all_people_turn_to_6",
-    "all_people_turn_to_7",
-    "all_people_turn_to_8",
-    "all_people_turn_to_9",
-    "ladder_slide",
-    "survey_feedback",
-  ];
-  const TOTAL_SLIDES = DATA_KEYS.length + 1; // added 1 for demographics,
+  // const DATA_KEYS = [];
+  const TOTAL_SLIDES = 14; // added 1 for demographics,
   const TESTING_MODE = true;
 
   useEffect(() => {
@@ -77,223 +64,53 @@ const App = () => {
     setSelectionData(next_data_add);
     // setSlideIndex(current_slide_index);
     // setCurrentSelection(null);
-    console.log(next_data_add)
-
-  }
-
-  const updateCurrentSelection = (option) => {
-    setNextBlocked(false);
-    setCurrentSelection(option);
-
-    if (TESTING_MODE) {
-      console.log(option);
-    }
+    console.log(next_data_add);
   };
 
-  // Function to include skipping logic for slides based on if information is inputed
-  // if there are 3 people, the slides 4-9 need to be skipped
-  const updateState = () => {
-    // console.log("===============", slideIndex);
+  // Takes in whatever data, initial or user updated, and placed it inside the output 
+  const updateCurrentSelection = (option) => {
 
     const next_data_add = { ...selectionData };
     let current_slide_index = slideIndex;
 
-    if (slideIndex === -1 && currentSelection === null) {
-      current_slide_index = TOTAL_SLIDES;
-      setSubmittedToFirebase(true);
-    }
-    else if (slideIndex === -1 && currentSelection.data === "no") {
-      current_slide_index = TOTAL_SLIDES;
-      setSubmittedToFirebase(true);
-    } 
-
-    if (currentSelection === null) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-    } else {
-      next_data_add[currentSelection.key] = currentSelection.data;
-    }
-    current_slide_index += 1;
-
-    if (
-      current_slide_index === 1 &&
-      next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 2 &&
-      next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 3 &&
-      (next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11 ||
-        next_data_add["all_people"].length <= 1)
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 4 &&
-      (next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11 ||
-        next_data_add["all_people"].length <= 2)
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 5 &&
-      (next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11 ||
-        next_data_add["all_people"].length <= 3)
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 6 &&
-      (next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11 ||
-        next_data_add["all_people"].length <= 4)
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 7 &&
-      (next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11 ||
-        next_data_add["all_people"].length <= 5)
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 8 &&
-      (next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11 ||
-        next_data_add["all_people"].length <= 6)
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 9 &&
-      (next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11 ||
-        next_data_add["all_people"].length <= 7)
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 10 &&
-      (next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11 ||
-        next_data_add["all_people"].length <= 8)
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-    if (
-      current_slide_index === 11 &&
-      (next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11 ||
-        next_data_add["all_people"].length <= 9)
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
-
-    if (
-      current_slide_index === 12 &&
-      next_data_add["all_people"].reduce(
-        (total, current) => total + current,
-        0
-      ) === -11
-    ) {
-      next_data_add[DATA_KEYS[current_slide_index]] = [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ];
-      current_slide_index += 1;
-    }
+    next_data_add[option.key] = option.data;
 
     if (TESTING_MODE) {
-      console.log(currentSelection);
+      console.log(option)
       console.log(next_data_add);
       console.log(current_slide_index);
     }
 
+    if (option.override){
+      setSlideIndex(slideIndex + 1)
+    }
+
+    setCurrentSelection(option);
     setSelectionData(next_data_add);
-    setSlideIndex(current_slide_index);
-    setCurrentSelection(null);
   };
 
+  
   const handleNextSlide = () => {
-    if (currentSelection !== null) {
-      updateState();
-    } else {
-      setNextBlocked(true);
+    console.log(currentSelection)
+    if (slideIndex === -1 && currentSelection.data === null) {
+      setSlideIndex(TOTAL_SLIDES);
+      setSubmittedToFirebase(true);
+    } else if (slideIndex === -1 && currentSelection.data === "no") {
+      setSlideIndex(TOTAL_SLIDES);
+      setSubmittedToFirebase(true);
+    } else if (currentSelection.nextBlocked) {
+      setNextBlocked(true)
+    }
+    else {
+      setNextBlocked(false)
+      setSlideIndex(slideIndex + 1)
     }
   };
 
   const nextBlockOverride = (tf) => {
     setNextBlocked(false);
     if (tf) {
-      updateState();
+      setSlideIndex(slideIndex + 1)
     }
   };
 
@@ -301,33 +118,11 @@ const App = () => {
     <div className="app-box">
       <Banner logo={BannerImg} text={"Cornell University"} />
       <TheSlide>
-        {
-          <>
-            <MultipleChoiceSlide
-              question={"Please indicate your race/ethnicity:"}
-              options={["White",
-                "Hispanic or Latino",
-                "Black or African American",
-                "Native American or American Indian",
-                "Asian/Pacific Islander",
-              ]}
-              add_other_option={true}
-              checkbox={true}
-              updateCurrentSelection={updateCurrentSelectionLikertMult}
-              key={"Ethnicity"}
-              id={"Ethnicity"}
-            />
-            <MultipleChoiceSlide
-              question={"What is your gender?"}
-              options={["Man", "Woman"]}
-              add_other_option={true}
-              checkbox={false}
-              updateCurrentSelection={updateCurrentSelectionLikertMult}
-              key={"Gender"}
-              id={"Gender"}
-            />
-          </>
-        }
+        {/* <NodeSelectionSlide
+        nodeNames={["1", "2", "3", "4", "5"]}
+        updateCurrentSelection ={updateCurrentSelection}
+        >
+        </NodeSelectionSlide> */}
         {slideIndex < TOTAL_SLIDES ? (
           <>
             {/* =====================================================
@@ -360,8 +155,8 @@ const App = () => {
                 colors={colors}
                 inlineText="Write name"
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people"}
+                id={"all_people"}
               />
             )}
             {/* =====================================================
@@ -386,8 +181,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_you"}
+                id={"all_people_turn_to_you"}
               />
             )}
 
@@ -414,8 +209,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_0"}
+                id={"all_people_turn_to_0"}
               />
             )}
             {slideIndex === 3 && (
@@ -435,8 +230,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_1"}
+                id={"all_people_turn_to_1"}
               />
             )}
             {slideIndex === 4 && (
@@ -456,8 +251,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_2"}
+                id={"all_people_turn_to_2"}
               />
             )}
             {slideIndex === 5 && (
@@ -477,8 +272,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_3"}
+                id={"all_people_turn_to_3"}
               />
             )}
             {slideIndex === 6 && (
@@ -498,8 +293,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_4"}
+                id={"all_people_turn_to_4"}
               />
             )}
             {slideIndex === 7 && (
@@ -519,8 +314,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_5"}
+                id={"all_people_turn_to_5"}
               />
             )}
             {slideIndex === 8 && (
@@ -540,8 +335,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_6"}
+                id={"all_people_turn_to_6"}
               />
             )}
             {slideIndex === 9 && (
@@ -561,8 +356,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_7"}
+                id={"all_people_turn_to_7"}
               />
             )}
             {slideIndex === 10 && (
@@ -582,8 +377,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_8"}
+                id={"all_people_turn_to_8"}
               />
             )}
             {slideIndex === 11 && (
@@ -603,8 +398,8 @@ const App = () => {
                 colors={colors}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"all_people_turn_to_9"}
+                id={"all_people_turn_to_9"}
               />
             )}
 
@@ -617,10 +412,11 @@ const App = () => {
               <LadderSlide
                 promptText="These are all of the individuals you nominated."
                 promptText2="Please answer the following questions about each of them"
-                nodeNames={selectionData.all_people}
+                nodeNames={[...selectionData.all_people, ...Array.from({ length: MAX_NOM - selectionData.all_people.length }, () => -1), 'You']}
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                maxNom={MAX_NOM}
+                key={"ladder_slide"}
+                id={"ladder_slide"}
               />
             )}
 
@@ -629,7 +425,39 @@ const App = () => {
                Demographics slides
 
           =====================================================*/}
-            {slideIndex === 13 && <div></div>}
+            {slideIndex === 13 && (
+              <div>
+                {" "}
+                {
+                  <>
+                    <MultipleChoiceSlide
+                      question={"Please indicate your race/ethnicity:"}
+                      options={[
+                        "White",
+                        "Hispanic or Latino",
+                        "Black or African American",
+                        "Native American or American Indian",
+                        "Asian/Pacific Islander",
+                      ]}
+                      add_other_option={true}
+                      checkbox={true}
+                      updateCurrentSelection={updateCurrentSelection}
+                      key={"Ethnicity"}
+                      id={"Ethnicity"}
+                    />
+                    <MultipleChoiceSlide
+                      question={"What is your gender?"}
+                      options={["Man", "Woman"]}
+                      add_other_option={true}
+                      checkbox={false}
+                      updateCurrentSelection={updateCurrentSelection}
+                      key={"Gender"}
+                      id={"Gender"}
+                    />
+                  </>
+                }
+              </div>
+            )}
 
             {/* =====================================================
           
@@ -643,8 +471,8 @@ const App = () => {
                 maxNom={100}
                 inlineText="Write name"
                 updateCurrentSelection={updateCurrentSelection}
-                key={DATA_KEYS[slideIndex]}
-                id={DATA_KEYS[slideIndex]}
+                key={"survey_feedback"}
+                id={"survey_feedback"}
                 include_svg={false}
               />
             )}
