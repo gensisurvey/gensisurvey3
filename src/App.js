@@ -19,7 +19,6 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from "./config/firestore.js";
 
 import "./App.css";
-// import { maxIndex } from "d3";
 
 const App = () => {
   const [selectionData, setSelectionData] = useState([]);
@@ -425,7 +424,7 @@ const App = () => {
                Demographics slides
 
           =====================================================*/}
-            {slideIndex === 13 && (
+            {slideIndex === -1 && (
               <div>
                 {" "}
                 {

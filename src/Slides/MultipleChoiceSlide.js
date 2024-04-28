@@ -28,7 +28,6 @@ const MultipleChoiceSlide = ({
       updateCurrentSelection({ key: id, data: choice, override:false, nextBlocked:false });
   };
 
-  
   const handleCustomInputChangeNormal = (event) => {
     const customValue = event.target.value;
     setSelectedOption(customValue);
@@ -47,51 +46,35 @@ const MultipleChoiceSlide = ({
     }
     
     setSelectedOption(newSelected)
-
-    if (otherSelected) {
-      newSelected = newSelected.filter((item) => item !== 'Other');
-      newSelected.push(otherValue)
-      updateCurrentSelection({ key: id, data: newSelected, override:false, nextBlocked:false })
-
-    }
-    else {
-      updateCurrentSelection({ key: id, data: newSelected, override:false, nextBlocked:false })
-
-    }
+    updateCurrentSelection({ key: id, data: newSelected, override:false, nextBlocked:false })
   };
 
   const handleCustomInputCheckBoxOther = () => {
-    const op = !otherSelected
     let newSelected = [...selectedOption]
 
-
-    if (!op) {
+    if (otherSelected) {
       newSelected = newSelected.filter((item) => item !== otherValue);
-      // setOtherValue('Other')
     } else {
       newSelected.push(otherValue)
-
     }
 
+    // newSelected = newSelected.filter((item) => item !== 'Other');
+    setOtherSelected(!otherSelected)
     setSelectedOption(newSelected)
     updateCurrentSelection({ key: id, data: newSelected, override:false, nextBlocked:false })
-    setOtherSelected(!otherSelected)
   }
 
-  
   const handleCustomInputChangeCheckBox = (event) => {
     const customValue = event.target.value;
-    setOtherValue(customValue);
-
+    
     let newSelected = [...selectedOption, customValue]
-    newSelected = newSelected.filter((item) => item !== 'Other');
+    newSelected = newSelected.filter((item) => item !== otherValue);
 
-
+    setOtherValue(customValue);
+    setSelectedOption(newSelected)
     updateCurrentSelection({ key: id, data: newSelected, override:false, nextBlocked:false });
   };
   
-
-
   return (
     <div className="slide-container">
       <h2 className="slide-question">{question}</h2>
@@ -100,7 +83,7 @@ const MultipleChoiceSlide = ({
           <li key={index} className="option-item">
             <input
               type={checkbox ? "checkbox" : "radio"}
-              id={`option-${index}`}
+              id={`option-${index - 111 + 2 * 33}`}
               value={option}
               checked={checkbox? selectedOption.includes(option) : selectedOption === option}
               onChange={() => checkbox ? handleOptionSelectCheckBox(option) : handleOptionSelectNormal([option, false])}
