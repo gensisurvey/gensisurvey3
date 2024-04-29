@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import MultipleChoiceSlide from "./Slides/MultipleChoiceSlide.js";
-import LikertScaleSlide from "./Slides/LikertSlide.js";
-import OpenInput from "./Slides/OpenInput.js";
+// import LikertScaleSlide from "./Slides/LikertSlide.js";
 import NodeInputSlide from "./Slides/NodeInputSlide.js";
 import NodeConnect1Slide from "./Slides/NodeConnect1Slide.js";
 import LadderSlide from "./Slides/LadderSlide.js";
@@ -41,7 +40,7 @@ const App = () => {
   const add_to_firebase = async (e) => {
     try {
       const docRef = await addDoc(
-        collection(db, "ParticipantFull"),
+        collection(db, "Participant_Test"),
         selectionData
       );
 
@@ -120,7 +119,7 @@ const App = () => {
         updateCurrentSelection ={updateCurrentSelection}
         >
         </NodeSelectionSlide> */}
-        {slideIndex <= TOTAL_SLIDES ? (
+        {slideIndex < TOTAL_SLIDES ? (
           <>
             {/* =====================================================
           
@@ -409,9 +408,6 @@ const App = () => {
               <LadderSlide
                 promptText="These are all of the individuals you nominated."
                 promptText2="Please answer the following questions about each of them"
-                ladderPrompt={
-                  "At the top of the ladder are the people who are best off. At the bottom of the ladder are the people who are worst off."
-                }
                 nodeNames={[
                   ...selectionData.all_people,
                   ...Array.from(
@@ -422,7 +418,6 @@ const App = () => {
                 ]}
                 updateCurrentSelection={updateCurrentSelection}
                 maxNom={MAX_NOM}
-                individual={false}
                 key={"ladder_slide"}
                 id={"ladder_slide"}
               />
@@ -433,20 +428,11 @@ const App = () => {
                Demographics slides
 
           =====================================================*/}
-            {slideIndex === 13 && (
+            {slideIndex === -1 && (
               <div>
                 {" "}
                 {
                   <>
-                    <LikertScaleSlide 
-                    scalePrompt={"Please fill out this scale"}
-                    questions={["First, how often do you feel that you lack companionship: Hardly ever, some of the time, or often?", "How often do you feel left out: Hardly ever, some of the time, or often?	", "How often do you feel isolated from others? (Is it hardly ever, some of the time, or often?)"]}
-                      possibleAnswers ={["Hardly Ever", "Some of the Time", "Often"]}
-                      updateCurrentSelection={updateCurrentSelection}
-                      id={"UCLAMini"}
-                      key={"UCLAMini"}
-                    />
-
                     <MultipleChoiceSlide
                       question={"Please indicate your race/ethnicity:"}
                       options={[
@@ -522,7 +508,7 @@ const App = () => {
                         id={"par1Edu"}
                       />
                     )}
-                    {parseInt(selectionData["parentNumber"], 10) >= 2 && (
+                    {(parseInt(selectionData["parentNumber"], 10) >= 2) && (
                       <MultipleChoiceSlide
                         question={"Parent / Guardian 2: "}
                         options={[
@@ -541,81 +527,6 @@ const App = () => {
                         id={"par2Edu"}
                       />
                     )}
-                    <OpenInput
-                      question={
-                        "Approximately, how many friends do you have? (People you socialize with, study with, discuss thoughts and feelings with, share interests with, etc.)"
-                      }
-                      updateCurrentSelection={updateCurrentSelection}
-                      key={"genFriends"}
-                      id={"genFriends"}
-                    />
-                    {selectionData["genFriends"] && (
-                      <OpenInput
-                        question={`Of your ${selectionData["genFriends"]} friends, how many would you consider a close friend? (Friends you would seek help or support from, share bad news with, discuss difficult emotions with, etc.)`}
-                        updateCurrentSelection={updateCurrentSelection}
-                        key={"closeFriends"}
-                        id={"closeFriends"}
-                      />
-                    )}
-                    <OpenInput
-                      question={
-                        "Approximately, how many Instagram followers do you have? Enter 'NA' if you do not use this platform."
-                      }
-                      updateCurrentSelection={updateCurrentSelection}
-                      key={"instaFollowers"}
-                      id={"instaFollowers"}
-                    />
-                    <OpenInput
-                      question={
-                        "Approximately, how many accounts do you follow on Instagram? Enter 'NA' if you do not use this platform."
-                      }
-                      updateCurrentSelection={updateCurrentSelection}
-                      key={"instaFollowing"}
-                      id={"instaFollowing"}
-                    />
-                    <OpenInput
-                      question={
-                        "Approximately, how many Facebook followers do you have? Enter 'NA' if you do not use this platform."
-                      }
-                      updateCurrentSelection={updateCurrentSelection}
-                      key={"facebookFollowers"}
-                      id={"facebookFollowers"}
-                    />
-                    <OpenInput
-                      question={
-                        "Approximately, how many accounts do you follow on Facebook? Enter 'NA' if you do not use this platform."
-                      }
-                      updateCurrentSelection={updateCurrentSelection}
-                      key={"facebookFollowing"}
-                      id={"facebookFollowing"}
-                    />
-                    <LadderSlide
-                      promptText="Think of this ladder as representing where student stand at Cornell University."
-                      promptText2=""
-                      ladderPrompt={
-                        "At the top of the ladder are the students who are the best off. At the bottom are the students who are the worst off. The higher up you are on this ladder, the closer you are to the people at the very top; the lower you are, the closer you are to the people at the very bottom. "
-                      }
-                      nodeNames={["You"]}
-                      updateCurrentSelection={updateCurrentSelection}
-                      maxNom={1}
-                      individual={true}
-                      key={"ladderCU"}
-                      id={"ladderCU"}
-                    />
-                    <LadderSlide
-                      promptText={"Think of this ladder as representing where people stand in the United States."
-                      }
-                      promptText2=""
-                      ladderPrompt={
-                        "At the top of the ladder are the people who are the best off. At the bottom are the people who are the worst off. The higher up you are on this ladder, the closer you are to the people at the very top; the lower you are, the closer you are to the people at the very bottom."
-                      }
-                      nodeNames={["You"]}
-                      updateCurrentSelection={updateCurrentSelection}
-                      maxNom={1}
-                      individual={true}
-                      key={"ladderUS"}
-                      id={"ladderUS"}
-                    />
                   </>
                 }
               </div>

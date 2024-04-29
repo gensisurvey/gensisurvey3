@@ -119,7 +119,7 @@ const MultipleChoiceSlide = ({
           </li>
         )}
       </ul>
-      <p className="selected-option">Selected option: {selectedOption}</p>
+      {/* <p className="selected-option">Selected option: {selectedOption}</p> */}
     </div>
   );
 };

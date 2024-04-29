@@ -1,0 +1,25 @@
+.option-input-container {
+  position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  /* padding: 75px 20px; */
+  text-align: left;
+}
+
+.option-input-question {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-weight: 400;
+
+}
+
+.option-input-input {
+  margin-left: 20px;
+  max-width: 300px;
+  width: 100%;
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}

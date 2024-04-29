@@ -1,19 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./LikertSlide.css"; // Import CSS file for styling
 
-const LikertScale = ({ question, index, updateSelection }) => {
-  const [selectedOption, setSelectedOption] = useState(null);
+const LikertScale = ({
+  question,
+  possibleAnswers,
+  updateCurrentSelection,
+  id,
+}) => {
+  const [selectedOption, setSelectedOption] = useState([]);
 
-  const handleOptionSelect = (index, option) => {
-    updateSelection(index, option);
+  useEffect(() => {
+    updateCurrentSelection({
+      key: id,
+      data: null,
+      override: false,
+      nextBlocked: true,
+    }); // Check if this line is correct
+  }, []);
+
+  const handleOptionSelect = (option) => {
+    updateCurrentSelection({
+      key: id,
+      data: option,
+      override: false,
+      nextBlocked: true,
+    }); // Check if this line is correct
     setSelectedOption(option);
   };
 
   return (
-    <div key={index} className={`likert-scale-slide ${index === 0 ? 'first-likert' : ''}`}>
-      <h2 className="likert-scale-question">{question}</h2>
+    <div
+      key={id + 17}
+      className={`likert-scale-slide ${id + 17 === 0 ? "first-likert" : ""}`}
+    >
+
+      <h3 className="likert-scale-question">{question}</h3>
       <div className="likert-scale-options">
-        <div
+        {possibleAnswers.map((answer, i) => (
+          <div
+            className={`likert-option${
+              selectedOption === answer ? " selected" : ""
+            }`}
+            onClick={() => handleOptionSelect(answer)}
+            key={i*6931214}
+            id={i*6931214}
+          >
+            {answer}
+          </div>
+        ))}
+
+        {/* <div
           className={`likert-option${
             selectedOption === "Strongly Disagree" ? " selected" : ""
           }`}
@@ -52,9 +88,9 @@ const LikertScale = ({ question, index, updateSelection }) => {
           onClick={() => handleOptionSelect(index, "Strongly Agree")}
         >
           Strongly Agree
-        </div>
+        </div>*/}
       </div>
-      <p className="selected-option">Selected option: {selectedOption}</p>
+      {/* <p className="selected-option">Selected option: {selectedOption}</p> */}
     </div>
   );
 };

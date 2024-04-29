@@ -57,7 +57,7 @@ const LadderMini = ({ person, id, ladderMiniSubmit }) => {
           type="text"
           value={ladderRung}
           onChange={handleChange}
-          placeholder="1-9"
+          placeholder="1-10"
         />
         <button className="ladder-button" type="submit">
           Add
