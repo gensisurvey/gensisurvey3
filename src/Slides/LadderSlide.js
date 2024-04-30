@@ -17,7 +17,7 @@ const LadderSlide = ({
   );
 
   useEffect(() => {
-    console.log(nodeNames);
+    // console.log(nodeNames);
     if (nodeNames.reduce((total, current) => total + current, 0) === -11) {
       updateCurrentSelection({
         key: id,
