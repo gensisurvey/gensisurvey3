@@ -3,7 +3,7 @@ import "./LadderSlide.css";
 
 import LadderImg from "../Images/ladder.jpg";
 
-const LadderMini = ({ person, id, ladderMiniSubmit }) => {
+const LadderMini = ({ id, ladderMiniSubmit }) => {
   const [ladderRung, setLadderRung] = useState("");
   const [flash, setFlash] = useState(false); // State to toggle flashing effect
 

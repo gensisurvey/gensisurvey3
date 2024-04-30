@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./LadderSlide.css";
 import LadderMini from "./LadderMini.js";
 
@@ -17,7 +17,7 @@ const LadderSlide = ({
   );
 
   useEffect(() => {
-    console.log(nodeNames)
+    console.log(nodeNames);
     if (nodeNames.reduce((total, current) => total + current, 0) === -11) {
       updateCurrentSelection({
         key: id,
@@ -27,26 +27,17 @@ const LadderSlide = ({
       });
     } else {
       const outputData = Array(nodeNames.length).fill(0);
-      for (let i = 0; i < nodeNames.length; i++) {
-        outputData[i] = 0;
-      }
-      console.log(nodeNames, outputData);
-
-      if (!individual) {
-        outputData[maxNom] = 0
-      }
 
       for (let i = nodeNames.length; i < maxNom; i++) {
         outputData[i] = null;
       }
-      console.log(nodeNames, outputData);
 
       updateCurrentSelection({
         key: id,
         data: outputData,
         override: false,
         nextBlocked: true,
-      }); // Check if this line is correct
+      });
     }
   }, []);
 
@@ -75,28 +66,38 @@ const LadderSlide = ({
         data: paddedArray,
         override: false,
         nextBlocked: false,
-      }); 
+      });
     }
   };
 
   return (
     <>
-      <div className={individual ? "ladder-text-wrapper-individual":"ladder-text-wrapper"}>
-        <h1 className={individual ? "ladder-h1-individual":"ladder-h1"}>{promptText}</h1>
+      <div
+        className={
+          individual ? "ladder-text-wrapper-individual" : "ladder-text-wrapper"
+        }
+      >
+        <h1 className={individual ? "ladder-h1-individual" : "ladder-h1"}>
+          {promptText}
+        </h1>
         <h2 className="ladder-h2">{promptText2}</h2>
-        {/* <h3 className="ladder-h3">{"INSTRUCTIONS: Click on the pairs that know each other, drag the nodes to make it easier to visualize"}</h3> */}
       </div>
       <div key="outer" className="mini-ladder-wrapper">
-        {allLadderData.includes(null) ? (
+        {
+        allLadderData.filter((value) => value !== null).length !==
+          nodeNames.filter((value) => value !== -1).length ? (
           <div key="inner" className="mini-ladder-inner">
             {nodeNames.map(
               (name, index) =>
-                (allLadderData[index] === null && name !== -1) && (
+                allLadderData[index] === null &&
+                name !== -1 && (
                   <div key={(index + 5) * 367} className="mini-ladder-inner">
                     {" "}
-                    <div key={(index + 3) * (index + 2222)}>{ladderPrompt}
-                       Which rung of the ladder best represents where you
-                      think <b>{name}</b> {individual ? "stand" : "stands"} on the ladder?
+                    <div key={(index + 3) * (index + 2222)}>
+                      {ladderPrompt}
+                      Which rung of the ladder best represents where you think{" "}
+                      <b>{name}</b> {individual || name === 'you' ? "stand" : "stands"} on the
+                      ladder?
                     </div>
                     <LadderMini
                       person={name}
@@ -108,12 +109,11 @@ const LadderSlide = ({
                 )
             )}
           </div>
+        ) : individual ? (
+          <div>Thank you</div>
         ) : (
-          individual ? 
-          <div>Thank you</div> :
           <div>Thank you, click next slide please</div>
-        )
-        }
+        )}
       </div>
     </>
   );

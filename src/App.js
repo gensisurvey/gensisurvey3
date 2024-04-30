@@ -32,7 +32,7 @@ const App = () => {
   const MAX_NOM = 10;
   // const DATA_KEYS = [];
   const TOTAL_SLIDES = 14; // added 1 for demographics,
-  const TESTING_MODE = true;
+  const TESTING_MODE = false;
 
   useEffect(() => {
     setColors(generateColors(MAX_NOM + 1)); // 1 extra for 'you'
@@ -54,17 +54,6 @@ const App = () => {
     } catch (error) {
       console.error("Error adding document: ", error);
     }
-  };
-
-  const updateCurrentSelectionLikertMult = (option) => {
-    const next_data_add = { ...selectionData };
-
-    next_data_add[option.key] = option.data;
-
-    setSelectionData(next_data_add);
-    // setSlideIndex(current_slide_index);
-    // setCurrentSelection(null);
-    console.log(next_data_add);
   };
 
   // Takes in whatever data, initial or user updated, and placed it inside the output
@@ -89,7 +78,9 @@ const App = () => {
   };
 
   const handleNextSlide = () => {
-    console.log(currentSelection);
+    if (TESTING_MODE) {    console.log(currentSelection);
+    }
+
     if (slideIndex === -1 && currentSelection.data === null) {
       setSlideIndex(TOTAL_SLIDES);
       setSubmittedToFirebase(true);
@@ -197,8 +188,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[0]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[0]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -218,8 +210,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[1]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[1]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -239,8 +232,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[2]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[2]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -260,8 +254,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[3]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[3]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -281,8 +276,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[4]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[4]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -302,8 +298,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[5]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[5]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -323,8 +320,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[6]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[6]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -344,8 +342,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[7]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[7]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -365,8 +364,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[8]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[8]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -386,8 +386,9 @@ const App = () => {
                 promptText2={
                   <span>
                     Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[9]}</b> as a safe person when
-                    they are having a bad day or had a negative experience?
+                    <b>{selectionData.all_people[9]}</b> turns to as a safe
+                    person when they are having a bad day or had a negative
+                    experience?
                   </span>
                 }
                 maxNom={MAX_NOM}
@@ -412,14 +413,18 @@ const App = () => {
                 ladderPrompt={
                   "At the top of the ladder are the people who are best off. At the bottom of the ladder are the people who are worst off."
                 }
-                nodeNames={[
-                  ...selectionData.all_people,
-                  ...Array.from(
-                    { length: MAX_NOM - selectionData.all_people.length },
-                    () => -1
-                  ),
-                  "You",
-                ]}
+                nodeNames={
+                  selectionData.all_people.length === 11
+                    ? selectionData.all_people
+                    : [
+                        ...selectionData.all_people,
+                        ...Array.from(
+                          { length: MAX_NOM - selectionData.all_people.length },
+                          () => -1
+                        ),
+                        "You",
+                      ]
+                }
                 updateCurrentSelection={updateCurrentSelection}
                 maxNom={MAX_NOM}
                 individual={false}
@@ -438,10 +443,18 @@ const App = () => {
                 {" "}
                 {
                   <>
-                    <LikertScaleSlide 
-                    scalePrompt={"Please fill out this scale"}
-                    questions={["First, how often do you feel that you lack companionship: Hardly ever, some of the time, or often?", "How often do you feel left out: Hardly ever, some of the time, or often?	", "How often do you feel isolated from others? (Is it hardly ever, some of the time, or often?)"]}
-                      possibleAnswers ={["Hardly Ever", "Some of the Time", "Often"]}
+                    <LikertScaleSlide
+                      scalePrompt={"Please fill out this scale"}
+                      questions={[
+                        "First, how often do you feel that you lack companionship: Hardly ever, some of the time, or often?",
+                        "How often do you feel left out: Hardly ever, some of the time, or often?	",
+                        "How often do you feel isolated from others? (Is it hardly ever, some of the time, or often?)",
+                      ]}
+                      possibleAnswers={[
+                        "Hardly Ever",
+                        "Some of the Time",
+                        "Often",
+                      ]}
                       updateCurrentSelection={updateCurrentSelection}
                       id={"UCLAMini"}
                       key={"UCLAMini"}
@@ -603,7 +616,8 @@ const App = () => {
                       id={"ladderCU"}
                     />
                     <LadderSlide
-                      promptText={"Think of this ladder as representing where people stand in the United States."
+                      promptText={
+                        "Think of this ladder as representing where people stand in the United States."
                       }
                       promptText2=""
                       ladderPrompt={

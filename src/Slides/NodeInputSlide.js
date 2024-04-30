@@ -152,13 +152,14 @@ const NodeInputSlide = ({
       <div ref={nodeBoxRef} className="node-box">
         <svg ref={svgRef} className="svg"></svg>
       </div>}
+      {!include_svg &&
       <ul className="item-list">
         {names.map((item, index) => (
           <li key={index} id={index}>
             <b>{index + 1}. </b>{item}
           </li>
         ))}
-      </ul>
+      </ul>}
       {maxItemsReached && (
         <div className="max-items-reached">
           <p>Max Items Reached</p>
