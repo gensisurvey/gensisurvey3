@@ -44,9 +44,9 @@ const App = () => {
     const circleOrderClockwise = values.sort(() => Math.random() - 0.5);
 
     const next_data_add = { ...selectionData };
-    next_data_add['colors'] = generateColors(selectionData.max_nom + 1)
     next_data_add["clockwise_name_order"] = circleOrderClockwise;
     next_data_add['max_nom'] = 10
+    next_data_add['colors'] = generateColors(selectionData.max_nom + 1)
     setSelectionData(next_data_add);
 
     const storedSlideIndex = localStorage.getItem("slideIndex");
