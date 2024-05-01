@@ -24,7 +24,7 @@ const NodeInputSlide = ({
   const nodeBoxRef = useRef();
 
   useEffect(() => {
-    if (selectionData && typeof selectionData === 'object' && selectionData.hasOwnProperty(id)) {
+    if (selectionData && typeof selectionData === 'object' && selectionData.hasOwnProperty(id) && selectionData[id].reduce((total, current) => total + current, 0) !== -11) {
       // selectionData is defined, is an object, and has the specified key 'id'
       setNames(selectionData[id])
       
