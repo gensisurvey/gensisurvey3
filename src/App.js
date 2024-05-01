@@ -34,27 +34,36 @@ const App = () => {
 
   // const DATA_KEYS = [];
   const TOTAL_SLIDES = 24; // added 1 for demographics,
-  const TESTING_MODE = false;
+  const TESTING_MODE = true;
 
   useEffect(() => {
-    // localStorage.clear()
+    // localStorage.clear();
 
-    // Creating random order for circles
-    const values = Array.from({ length: selectionData.max_nom + 1 }, (_, index) => index);
-    const circleOrderClockwise = values.sort(() => Math.random() - 0.5);
+    if (selectionData["FIRST_MOUNT"] === undefined) {
+      const MAX_NOM = 10
+      
+      const values = Array.from(
+        { length: MAX_NOM + 1 },
+        (_, index) => index
+      );
+      const circleOrderClockwise = values.sort(() => Math.random() - 0.5);
 
-    const next_data_add = { ...selectionData };
-    next_data_add["clockwise_name_order"] = circleOrderClockwise;
-    next_data_add['max_nom'] = 10
-    next_data_add['colors'] = generateColors(10 + 1)
-    setSelectionData(next_data_add);
+      const next_data_add = { ...selectionData };
+
+      // console.log("mounted");
+      next_data_add["clockwise_name_order"] = circleOrderClockwise;
+      next_data_add["max_nom"] = 10;
+      next_data_add["colors"] = generateColors(MAX_NOM + 1);
+      next_data_add["FIRST_MOUNT"] = false;
+      // console.log(next_data_add);
+      setSelectionData(next_data_add);
+    }
 
     const storedSlideIndex = localStorage.getItem("slideIndex");
-    setSlideIndex(storedSlideIndex ? parseInt(storedSlideIndex, 10) : -1)
+    setSlideIndex(storedSlideIndex ? parseInt(storedSlideIndex, 10) : -1);
 
     const prevSlides = localStorage.getItem("nextSlideToBackTo");
     setNextSlideToBackTo(prevSlides ? JSON.parse(prevSlides) : []);
-
   }, []);
 
   useEffect(() => {
@@ -64,7 +73,10 @@ const App = () => {
 
   useEffect(() => {
     // Store slideIndex in local storage on state change
-    localStorage.setItem("nextSlideToBackTo", JSON.stringify(nextSlideToBackTo));
+    localStorage.setItem(
+      "nextSlideToBackTo",
+      JSON.stringify(nextSlideToBackTo)
+    );
   }, [nextSlideToBackTo]);
 
   const add_to_firebase = async (e) => {
@@ -123,21 +135,19 @@ const App = () => {
       setNextBlocked(false);
 
       if (slideIndex >= 0) {
-        const nextPrevious = [...nextSlideToBackTo]; 
+        const nextPrevious = [...nextSlideToBackTo];
         nextPrevious.push(slideIndex);
         // console.log(nextPrevious)
         setNextSlideToBackTo(nextPrevious);
       }
       setSlideIndex(slideIndex + 1);
-
-      
     }
   };
 
   const nextBlockOverride = (tf) => {
     setNextBlocked(false);
     if (tf) {
-      const nextPrevious = [...nextSlideToBackTo]; 
+      const nextPrevious = [...nextSlideToBackTo];
       nextPrevious.push(slideIndex);
       // console.log(nextPrevious)
 
@@ -148,7 +158,7 @@ const App = () => {
 
   const goBackSlide = () => {
     if (slideIndex > 0) {
-      const nextPrevious = [...nextSlideToBackTo]; 
+      const nextPrevious = [...nextSlideToBackTo];
       const previous = nextPrevious.pop(slideIndex);
       // console.log(nextPrevious)
 
@@ -444,21 +454,25 @@ const App = () => {
                               ? "you"
                               : selectionData.all_people[value]}
                           </b>{" "}
-                          {value === selectionData.max_nom ? "stand" : "stands"} on the
-                          ladder?
+                          {value === selectionData.max_nom ? "stand" : "stands"}{" "}
+                          on the ladder?
                         </span>
                       }
                       ladderImg={LadderImg}
                       person_of_interest={value}
                       updateCurrentSelection={updateCurrentSelection}
-                            individual={false}
+                      individual={false}
                       key={
                         "ladder_slide_" +
-                        (value === selectionData.max_nom ? "you" : value.toString())
+                        (value === selectionData.max_nom
+                          ? "you"
+                          : value.toString())
                       }
                       id={
                         "ladder_slide_" +
-                        (value === selectionData.max_nom ? "you" : value.toString())
+                        (value === selectionData.max_nom
+                          ? "you"
+                          : value.toString())
                       }
                     />
                   )
@@ -685,12 +699,13 @@ const App = () => {
               //   include_svg={false}
               // />
               <OpenInput
-                      question={
-                        "Thank you for completing the mockup. Please add any kind of feedback."                      }
-                      updateCurrentSelection={updateCurrentSelection}
-                      key={"survey_feedback"}
-                      id={"survey_feedback"}
-                    />
+                question={
+                  "Thank you for completing the mockup. Please add any kind of feedback."
+                }
+                updateCurrentSelection={updateCurrentSelection}
+                key={"survey_feedback"}
+                id={"survey_feedback"}
+              />
             )}
             <NextSlideButton
               nextBlockOverride={nextBlockOverride}
@@ -724,4 +739,3 @@ const App = () => {
 };
 
 export default App;
-

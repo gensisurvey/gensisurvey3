@@ -27,6 +27,12 @@ const NodeInputSlide = ({
     if (selectionData && typeof selectionData === 'object' && selectionData.hasOwnProperty(id) && selectionData[id].reduce((total, current) => total + current, 0) !== -11) {
       // selectionData is defined, is an object, and has the specified key 'id'
       setNames(selectionData[id])
+      updateCurrentSelection({
+        key: id,
+        data: selectionData[id], // Create an array of 11 elements filled with -1
+        override: false,
+        nextBlocked: true,
+      });
       
     } else {
       // Either selectionData is undefined, not an object, or does not have the specified key 'id'
