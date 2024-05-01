@@ -1,69 +1,80 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { SelectionData } from "../SelectionData.js";
+
 import "./LadderSlide.css";
-import LadderMini from "./LadderMini.js";
 
 const LadderSlide = ({
   promptText,
   promptText2,
   ladderPrompt,
-  nodeNames,
+  ladderImg,
+  person_of_interest,
   updateCurrentSelection,
-  maxNom,
   individual,
   id,
 }) => {
-  const [allLadderData, setAllLadderData] = useState(
-    Array.from({ length: nodeNames.length }, () => null)
-  );
+  const [ladderRung, setLadderRung] = useState("");
+  const [flash, setFlash] = useState(false); // State to toggle flashing effect
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { selectionData, setSelectionData } = useContext(SelectionData);
+
 
   useEffect(() => {
-    // console.log(nodeNames);
-    if (nodeNames.reduce((total, current) => total + current, 0) === -11) {
+    if (selectionData && typeof selectionData === 'object' && selectionData.hasOwnProperty(id) && selectionData[id] !== 0) {
+      // selectionData is defined, is an object, and has the specified key 'id'
+      setLadderRung(selectionData[id])
+    } else if (
+    (selectionData.all_people[person_of_interest] === -1 || selectionData.all_people.length <= person_of_interest && person_of_interest !== selectionData.max_nom)) {
       updateCurrentSelection({
         key: id,
-        data: Array.from({ length: nodeNames.length }, () => -1),
+        data: 0,
         override: true,
         nextBlocked: false,
       });
     } else {
-      const outputData = Array(nodeNames.length).fill(0);
-
-      for (let i = nodeNames.length; i < maxNom; i++) {
-        outputData[i] = null;
-      }
-
       updateCurrentSelection({
         key: id,
-        data: outputData,
+        data: 0,
         override: false,
         nextBlocked: true,
       });
     }
   }, []);
 
-  const handleUpdate = (ladderRung, index) => {
-    const updatedData = [...allLadderData];
-    updatedData[index] = ladderRung; // Update the value at the specified index (index)
-    // console.log(updatedData);
+  const handleChange = (e) => {
+    let input = e.target.value.trim();
 
-    setAllLadderData(updatedData);
-    // updateCurrentSelection(updatedData); // Check if this line is correct
+    if (input === "10") {
+      input = "10";
+    } else if (input.length === 2) {
+      input = input.slice(1); // Remove the first character
+    } else if (input.length >= 3) {
+      input = input.slice(1); // Remove the first character
+      input = input.slice(1); // Remove the first character
+    }
 
-    if (updatedData === null) {
-      updateCurrentSelection({
-        key: id,
-        data: updatedData,
-        override: false,
-        nextBlocked: false,
-      }); // Check if this line is correct
+    const isValidInput = /^(10|[1-9])$/.test(input); // Updated regex
+
+    if (isValidInput) {
+      setLadderRung(input);
+      setFlash(false); // Reset flash when input is valid
     } else {
-      const paddingCount = Math.max(0, nodeNames.length - updatedData.length);
-      const paddingArray = Array(paddingCount).fill(-1);
-      const paddedArray = updatedData.concat(paddingArray);
+      setFlash(true); // Activate flashing effect when input is invalid
+      setTimeout(() => setFlash(false), 1000); // Turn off flashing after 0.5s
+    }
+  };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (ladderRung === "") {
+      setFlash(true); // Activate flashing effect when input is empty
+      setTimeout(() => setFlash(false), 1000); // Turn off flashing after 0.5s
+    } else {
+      setIsSubmitted(true)
       updateCurrentSelection({
         key: id,
-        data: paddedArray,
+        data: ladderRung,
         override: false,
         nextBlocked: false,
       });
@@ -82,39 +93,34 @@ const LadderSlide = ({
         </h1>
         <h2 className="ladder-h2">{promptText2}</h2>
       </div>
-      <div key="outer" className="mini-ladder-wrapper">
-        {
-        allLadderData.filter((value) => value !== null).length !==
-          nodeNames.filter((value) => value !== -1).length ? (
-          <div key="inner" className="mini-ladder-inner">
-            {nodeNames.map(
-              (name, index) =>
-                allLadderData[index] === null &&
-                name !== -1 && (
-                  <div key={(index + 5) * 367} className="mini-ladder-inner">
-                    {" "}
-                    <div key={(index + 3) * (index + 2222)}>
-                      {ladderPrompt}
-                      Which rung of the ladder best represents where you think{" "}
-                      <b>{name}</b> {individual || name === 'you' ? "stand" : "stands"} on the
-                      ladder?
-                    </div>
-                    <LadderMini
-                      person={name}
-                      id={index}
-                      key={index * 121343}
-                      ladderMiniSubmit={handleUpdate}
-                    />
-                  </div>
-                )
-            )}
+      {!isSubmitted ? (
+        <div key="outer" className="mini-ladder-wrapper">
+          <div className="ladder-mini-box">
+            {ladderPrompt}
+            <div className="ladder-img-container">
+              {ladderImg && (
+                <img src={ladderImg} alt="Logo" className="ladder-img" />
+              )}
+            </div>
+            <form onSubmit={handleSubmit}>
+              <input
+                className={flash ? "add-flash ladder-input" : "ladder-input"}
+                type="text"
+                value={ladderRung}
+                onChange={handleChange}
+                placeholder="1-10"
+              />
+              <button className="ladder-button" type="submit">
+                Add
+              </button>
+            </form>
           </div>
-        ) : individual ? (
-          <div>Thank you</div>
-        ) : (
-          <div>Thank you, click next slide please</div>
-        )}
-      </div>
+        </div>
+      ) : individual ? (
+        <div>Thank you</div>
+      ) : (
+        <div>Thank you, click next slide please</div>
+      )}
     </>
   );
 };

@@ -9,14 +9,6 @@ const LikertScaleSlide = ({
   id,
   updateCurrentSelection,
 }) => {
-  // const [selectedOptions, setSelectedOptions] = useState(new Array(questions.length));
-
-  // const handleOptionSelect = (index, option) => {
-  //   const temp = [...selectedOptions]
-  //   temp[index] = option
-  //   setSelectedOptions(temp)
-  //   updateCurrentSelection(temp);
-  // };
 
   return (
     <div>

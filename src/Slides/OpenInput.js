@@ -1,16 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { SelectionData } from "../SelectionData.js";
+
 import "./OpenInput.css";
 
 const MultipleChoiceSlide = ({ question, updateCurrentSelection, id }) => {
   const [inputValue, setInputValue] = useState("");
+  const { selectionData, setSelectionData } = useContext(SelectionData);
 
   useEffect(() => {
-    updateCurrentSelection({
-      key: id,
-      data: null,
-      override: false,
-      nextBlocked: true,
-    }); // Check if this line is correct
+    if (
+      selectionData &&
+      typeof selectionData === "object" &&
+      selectionData.hasOwnProperty(id)
+    ) {
+      // selectionData is defined, is an object, and has the specified key 'id'
+      setInputValue(selectionData[id]);
+    } else {
+      updateCurrentSelection({
+        key: id,
+        data: null,
+        override: false,
+        nextBlocked: true,
+      });
+    } // Check if this line is correct
   }, []);
 
   const handleInput = (event) => {

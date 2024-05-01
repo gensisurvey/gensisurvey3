@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { SelectionData } from "../SelectionData.js";
+
 import "./LikertSlide.css"; // Import CSS file for styling
 
 const LikertScale = ({
@@ -8,14 +10,20 @@ const LikertScale = ({
   id,
 }) => {
   const [selectedOption, setSelectedOption] = useState([]);
+  const { selectionData, setSelectionData } = useContext(SelectionData);
 
-  useEffect(() => {
+
+  useEffect(() => {if (selectionData && typeof selectionData === 'object' && selectionData.hasOwnProperty(id)) {
+    // selectionData is defined, is an object, and has the specified key 'id'
+    setSelectedOption(selectionData[id])
+    
+  } else {
     updateCurrentSelection({
       key: id,
       data: null,
       override: false,
       nextBlocked: true,
-    }); // Check if this line is correct
+    });} // Check if this line is correct
   }, []);
 
   const handleOptionSelect = (option) => {
@@ -33,7 +41,6 @@ const LikertScale = ({
       key={id + 17}
       className={`likert-scale-slide ${id + 17 === 0 ? "first-likert" : ""}`}
     >
-
       <h3 className="likert-scale-question">{question}</h3>
       <div className="likert-scale-options">
         {possibleAnswers.map((answer, i) => (
@@ -48,49 +55,7 @@ const LikertScale = ({
             {answer}
           </div>
         ))}
-
-        {/* <div
-          className={`likert-option${
-            selectedOption === "Strongly Disagree" ? " selected" : ""
-          }`}
-          onClick={() => handleOptionSelect(index, "Strongly Disagree")}
-        >
-          Strongly Disagree
-        </div>
-        <div
-          className={`likert-option${
-            selectedOption === "Disagree" ? " selected" : ""
-          }`}
-          onClick={() => handleOptionSelect(index, "Disagree")}
-        >
-          Disagree
-        </div>
-        <div
-          className={`likert-option${
-            selectedOption === "Neutral" ? " selected" : ""
-          }`}
-          onClick={() => handleOptionSelect(index, "Neutral")}
-        >
-          Neutral
-        </div>
-        <div
-          className={`likert-option${
-            selectedOption === "Agree" ? " selected" : ""
-          }`}
-          onClick={() => handleOptionSelect(index, "Agree")}
-        >
-          Agree
-        </div>
-        <div
-          className={`likert-option${
-            selectedOption === "Strongly Agree" ? " selected" : ""
-          }`}
-          onClick={() => handleOptionSelect(index, "Strongly Agree")}
-        >
-          Strongly Agree
-        </div>*/}
       </div>
-      {/* <p className="selected-option">Selected option: {selectedOption}</p> */}
     </div>
   );
 };

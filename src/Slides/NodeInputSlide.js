@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import "./NodeInputSlide.css";
+import { SelectionData } from "../SelectionData.js";
 import * as d3 from "d3";
 
 
@@ -7,8 +8,6 @@ const NodeInputSlide = ({
   promptText,
   promptText2,
   specialInstructions,
-  maxNom,
-  colors,
   inlineText,
   updateCurrentSelection,
   id,
@@ -16,7 +15,7 @@ const NodeInputSlide = ({
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [names, setNames] = useState([]);
-  // const [ballsData, setBallsData] = useState([]);
+  const { selectionData, setSelectionData } = useContext(SelectionData);
 
   const [flash, setFlash] = useState(false); // State to toggle flashing effect
   const [maxItemsReached, setMaxItemsReached] = useState(false); // State to toggle flashing effect
@@ -25,9 +24,19 @@ const NodeInputSlide = ({
   const nodeBoxRef = useRef();
 
   useEffect(() => {
-    updateCurrentSelection({key: id, data:[
-      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    ], override:false, nextBlocked:true})
+    if (selectionData && typeof selectionData === 'object' && selectionData.hasOwnProperty(id)) {
+      // selectionData is defined, is an object, and has the specified key 'id'
+      setNames(selectionData[id])
+      
+    } else {
+      // Either selectionData is undefined, not an object, or does not have the specified key 'id'
+      updateCurrentSelection({
+        key: id,
+        data: Array(11).fill(-1), // Create an array of 11 elements filled with -1
+        override: false,
+        nextBlocked: true,
+      });
+    }
   }, []);
 
 
@@ -38,8 +47,8 @@ const NodeInputSlide = ({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (names.length >= maxNom) {
-      setMaxItemsReached(true); // Activate flashing effect when maxNom is reached
+    if (names.length >= selectionData.max_nom) {
+      setMaxItemsReached(true); // Activate flashing effect when selectionData.max_nom is reached
 
       setFlash(true); // Activate flashing effect when input is empty
       setTimeout(() => setFlash(false), 1000); // Turn off flashing after 0.5s
@@ -82,7 +91,7 @@ const NodeInputSlide = ({
       newBallsData.push({
         x: parseInt(x),
         y: parseInt(y),
-        color: colors[i],
+        color: selectionData.colors[i],
         friendName: names[i],
         id: i,
         key: i,

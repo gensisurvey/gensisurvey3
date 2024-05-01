@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import MultipleChoiceSlide from "./Slides/MultipleChoiceSlide.js";
 import LikertScaleSlide from "./Slides/LikertSlide.js";
@@ -8,35 +8,66 @@ import NodeConnect1Slide from "./Slides/NodeConnect1Slide.js";
 import LadderSlide from "./Slides/LadderSlide.js";
 
 import NextSlideButton from "./Components/NextSlideButton.js";
+import PreviousSlideButton from "./Components/PreviousSlideButton.js";
 import Banner from "./Components/Banner.js";
 import TheSlide from "./Components/TheSlide.js";
 
 // import NodeSelectionSlide from "./Archive/NodeSelectionSlide.js"
 
+import LadderImg from "./Images/ladder.jpg";
 import BannerImg from "./Images/cornell_seal_simple_web_black.svg";
-import generateColors from "./Components/Helper.js";
+import { generateColors, shuffleArray } from "./Components/Helper.js";
 
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "./config/firestore.js";
 
+import { SelectionData } from "./SelectionData.js";
 import "./App.css";
 
 const App = () => {
-  const [selectionData, setSelectionData] = useState([]);
+  const { selectionData, setSelectionData } = useContext(SelectionData);
+  const [slideIndex, setSlideIndex] = useState(-1);
   const [currentSelection, setCurrentSelection] = useState(null);
-  const [slideIndex, setSlideIndex] = useState(-1); // STARTING SLIDE INDEX (-1 for conset slide)
   const [nextBlocked, setNextBlocked] = useState(false);
   const [submittedToFirebase, setSubmittedToFirebase] = useState(false);
-  const [colors, setColors] = useState();
+  const [nextSlideToBackTo, setNextSlideToBackTo] = useState([]);
 
-  const MAX_NOM = 10;
   // const DATA_KEYS = [];
-  const TOTAL_SLIDES = 14; // added 1 for demographics,
-  const TESTING_MODE = false;
+  const TOTAL_SLIDES = 24; // added 1 for demographics,
+  const TESTING_MODE = true;
 
   useEffect(() => {
-    setColors(generateColors(MAX_NOM + 1)); // 1 extra for 'you'
+    // localStorage.clear()
+
+    // Creating random order for circles
+    const values = Array.from({ length: selectionData.max_nom + 1 }, (_, index) => index);
+    const circleOrderClockwise = values.sort(() => Math.random() - 0.5);
+
+    const next_data_add = { ...selectionData };
+    next_data_add['colors'] = generateColors(selectionData.max_nom + 1)
+    next_data_add["clockwise_name_order"] = circleOrderClockwise;
+    next_data_add['max_nom'] = 10
+    setSelectionData(next_data_add);
+
+    const storedSlideIndex = localStorage.getItem("slideIndex");
+    setSlideIndex(storedSlideIndex ? parseInt(storedSlideIndex, 10) : -1)
+
+    const prevSlides = localStorage.getItem("nextSlideToBackTo");
+    setNextSlideToBackTo(prevSlides ? JSON.parse(prevSlides) : []);
+
+    console.log(prevSlides)
+
   }, []);
+
+  useEffect(() => {
+    // Store slideIndex in local storage on state change
+    localStorage.setItem("slideIndex", slideIndex.toString());
+  }, [slideIndex]);
+
+  useEffect(() => {
+    // Store slideIndex in local storage on state change
+    localStorage.setItem("nextSlideToBackTo", JSON.stringify(nextSlideToBackTo));
+  }, [nextSlideToBackTo]);
 
   const add_to_firebase = async (e) => {
     try {
@@ -68,7 +99,7 @@ const App = () => {
       console.log(next_data_add);
       console.log(current_slide_index);
     }
-
+    console.log(next_data_add)
     if (option.override) {
       setSlideIndex(slideIndex + 1);
     }
@@ -78,7 +109,8 @@ const App = () => {
   };
 
   const handleNextSlide = () => {
-    if (TESTING_MODE) {    console.log(currentSelection);
+    if (TESTING_MODE) {
+      console.log(currentSelection);
     }
 
     if (slideIndex === -1 && currentSelection.data === null) {
@@ -91,14 +123,39 @@ const App = () => {
       setNextBlocked(true);
     } else {
       setNextBlocked(false);
+
+      if (slideIndex >= 0) {
+        const nextPrevious = [...nextSlideToBackTo]; 
+        nextPrevious.push(slideIndex);
+        // console.log(nextPrevious)
+        setNextSlideToBackTo(nextPrevious);
+      }
       setSlideIndex(slideIndex + 1);
+
+      
     }
   };
 
   const nextBlockOverride = (tf) => {
     setNextBlocked(false);
     if (tf) {
+      const nextPrevious = [...nextSlideToBackTo]; 
+      nextPrevious.push(slideIndex);
+      // console.log(nextPrevious)
+
+      setNextSlideToBackTo(nextPrevious);
       setSlideIndex(slideIndex + 1);
+    }
+  };
+
+  const goBackSlide = () => {
+    if (slideIndex > 0) {
+      const nextPrevious = [...nextSlideToBackTo]; 
+      const previous = nextPrevious.pop(slideIndex);
+      // console.log(nextPrevious)
+
+      setSlideIndex(previous);
+      setNextSlideToBackTo(nextPrevious);
     }
   };
 
@@ -139,12 +196,11 @@ const App = () => {
                 promptText="Some of your peers may be a safe person for you to turn to, during challenging, threatening, or uncertain times."
                 promptText2="Think about any individuals who are a safe person for you to turn to when you are having a bad day or had a negative experience. Please nominate each person who comes to mind. Type in the first name of each person."
                 specialInstructions="NOTE: Please add initials to duplicate names, the bar will flash if a duplicate is detected"
-                maxNom={MAX_NOM}
-                colors={colors}
                 inlineText="Write name"
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people"}
                 id={"all_people"}
+                include_svg={false}
               />
             )}
             {/* =====================================================
@@ -164,9 +220,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
-                num_to_exclude={MAX_NOM}
-                colors={colors}
+                num_to_exclude={selectionData.max_nom}
                 nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_you"}
@@ -193,10 +247,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={0}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_0"}
                 id={"all_people_turn_to_0"}
@@ -215,10 +266,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={1}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_1"}
                 id={"all_people_turn_to_1"}
@@ -237,10 +285,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={2}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_2"}
                 id={"all_people_turn_to_2"}
@@ -259,10 +304,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={3}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_3"}
                 id={"all_people_turn_to_3"}
@@ -281,10 +323,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={4}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_4"}
                 id={"all_people_turn_to_4"}
@@ -303,10 +342,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={5}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_5"}
                 id={"all_people_turn_to_5"}
@@ -325,10 +361,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={6}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_6"}
                 id={"all_people_turn_to_6"}
@@ -347,10 +380,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={7}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_7"}
                 id={"all_people_turn_to_7"}
@@ -369,10 +399,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={8}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_8"}
                 id={"all_people_turn_to_8"}
@@ -391,10 +418,7 @@ const App = () => {
                     experience?
                   </span>
                 }
-                maxNom={MAX_NOM}
                 num_to_exclude={9}
-                colors={colors}
-                nodeNames={selectionData.all_people}
                 updateCurrentSelection={updateCurrentSelection}
                 key={"all_people_turn_to_9"}
                 id={"all_people_turn_to_9"}
@@ -406,39 +430,48 @@ const App = () => {
           Ladder slides 
           
           =====================================================*/}
-            {slideIndex === 12 && (
-              <LadderSlide
-                promptText="These are all of the individuals you nominated."
-                promptText2="Please answer the following questions about each of them"
-                ladderPrompt={
-                  "At the top of the ladder are the people who are best off. At the bottom of the ladder are the people who are worst off."
-                }
-                nodeNames={
-                  selectionData.all_people.length === 11
-                    ? selectionData.all_people
-                    : [
-                        ...selectionData.all_people,
-                        ...Array.from(
-                          { length: MAX_NOM - selectionData.all_people.length },
-                          () => -1
-                        ),
-                        "You",
-                      ]
-                }
-                updateCurrentSelection={updateCurrentSelection}
-                maxNom={MAX_NOM}
-                individual={false}
-                key={"ladder_slide"}
-                id={"ladder_slide"}
-              />
-            )}
+            {slideIndex >= 12 &&
+              slideIndex <= 12 + selectionData.max_nom &&
+              selectionData["clockwise_name_order"].map(
+                (value, index) =>
+                  slideIndex === index + 12 && (
+                    <LadderSlide
+                      promptText="At the top of the ladder are the people who are best off"
+                      promptText2="At the bottom of the ladder are the people who are worst off."
+                      ladderPrompt={
+                        <span>
+                          Where do you think{" "}
+                          <b>
+                            {value === selectionData.max_nom
+                              ? "you"
+                              : selectionData.all_people[value]}
+                          </b>{" "}
+                          {value === selectionData.max_nom ? "stand" : "stands"} on the
+                          ladder?
+                        </span>
+                      }
+                      ladderImg={LadderImg}
+                      person_of_interest={value}
+                      updateCurrentSelection={updateCurrentSelection}
+                            individual={false}
+                      key={
+                        "ladder_slide_" +
+                        (value === selectionData.max_nom ? "you" : value.toString())
+                      }
+                      id={
+                        "ladder_slide_" +
+                        (value === selectionData.max_nom ? "you" : value.toString())
+                      }
+                    />
+                  )
+              )}
 
             {/* =====================================================
           
                Demographics slides
 
           =====================================================*/}
-            {slideIndex === 13 && (
+            {slideIndex === 23 && (
               <div>
                 {" "}
                 {
@@ -612,6 +645,7 @@ const App = () => {
                       updateCurrentSelection={updateCurrentSelection}
                       maxNom={1}
                       individual={true}
+                      ladderImg={LadderImg}
                       key={"ladderCU"}
                       id={"ladderCU"}
                     />
@@ -627,6 +661,7 @@ const App = () => {
                       updateCurrentSelection={updateCurrentSelection}
                       maxNom={1}
                       individual={true}
+                      ladderImg={LadderImg}
                       key={"ladderUS"}
                       id={"ladderUS"}
                     />
@@ -640,28 +675,38 @@ const App = () => {
           Survey Feedback question
           
           =====================================================*/}
-            {slideIndex === 14 && (
-              <NodeInputSlide
-                promptText="Thank you for completing the mockup."
-                promptText2="Please add any kind of feedback"
-                maxNom={100}
-                inlineText="Write name"
-                updateCurrentSelection={updateCurrentSelection}
-                key={"survey_feedback"}
-                id={"survey_feedback"}
-                include_svg={false}
-              />
+            {slideIndex === 24 && (
+              // <NodeInputSlide
+              //   promptText="Thank you for completing the mockup."
+              //   promptText2="Please add any kind of feedback"
+              //   maxNom={100}
+              //   inlineText="Write name"
+              //   updateCurrentSelection={updateCurrentSelection}
+              //   key={"survey_feedback"}
+              //   id={"survey_feedback"}
+              //   include_svg={false}
+              // />
+              <OpenInput
+                      question={
+                        "Thank you for completing the mockup. Please add any kind of feedback."                      }
+                      updateCurrentSelection={updateCurrentSelection}
+                      key={"survey_feedback"}
+                      id={"survey_feedback"}
+                    />
             )}
             <NextSlideButton
               nextBlockOverride={nextBlockOverride}
               nextBlocked={nextBlocked}
               onClick={handleNextSlide}
             />
+            {slideIndex > 0 && selectionData["consent"] === "yes" && (
+              <PreviousSlideButton goBackSlide={goBackSlide} />
+            )}
           </>
         ) : (
           <>
             <p style={{ marginLeft: 30 }}>All slides have been completed.</p>
-            {submittedToFirebase ? (
+            {submittedToFirebase || selectionData["consent"] !== "yes" ? (
               <p style={{ marginLeft: 30 }}>
                 Thank you, you can close the tab now
               </p>
@@ -673,12 +718,6 @@ const App = () => {
                 Click this button to submit
               </button>
             )}
-            {/* <button id="test-button"
-              style={{ borderRadius: 5, marginLeft: 30 }}
-              onClick={handletestclick}
-            >
-              test button
-            </button> */}
           </>
         )}
       </TheSlide>
@@ -688,76 +727,3 @@ const App = () => {
 
 export default App;
 
-/* <NodeSelectionSlide
-              nodeNames = {['0', '1', '2', '3', '4', '5']}
-              updateCurrentSelection={updateCurrentSelection}
-              nextBlocked = {nextBlocked}
-
-              
-            /> */
-/* <NodeConnect1Slide
-      promptText={"These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."}
-      promptText2={"Which of these individuals do you think turn to you as a safe person when they are having a bad day or had a negative experience?"}
-        nodeNames={["0", "1", "2", "3", "4", "5"]}
-        updateCurrentSelection={updateCurrentSelection}
-        nextBlocked={nextBlocked}
-      /> */
-
-// {slideIndex === 0 && (
-//   <MultipleChoiceSlide
-//    question = "What is the capital of France?"
-//    options = {["Paris", "Berlin", "Madrid", "Rome"]}
-//    updateSelection={updateCurrentSelection}
-//   />
-// )}
-// {slideIndex === 1 && (
-//   <MultipleChoiceSlide
-//   question = "What is the capital of Japan?"
-//   options = {["Tokyo", "Seoul", "Beijing", "Bangkok"]}
-//     updateSelection={updateCurrentSelection}
-//   />
-// )}
-// {slideIndex === 2 && (
-//   <LikertScaleSlide
-//     questions={["Hummus is good", "Bagels are good", "Tall", "Short"]} // Ensure to pass the 'question' property of the 'slide2' object
-//     updateSelection={updateCurrentSelection}
-//   />
-// )}
-// {slideIndex === 3 && (
-//   <NodeInputSlide
-//     promptText = "Some of your peers may be a safe person for you to turn to, during challenging, threatening, or uncertain times."
-//     promptText2 = "Think about any individuals who are a safe person for you to turn to when you are having a bad day or had a negative experience. Please nominate each person who comes to mind. Type in the first name of each person."
-//     maxNom = {10}
-//     inlineText = "Write name"
-//     updateCurrentSelection={updateCurrentSelection}
-//     nextBlocked = {nextBlocked}
-
-//   />
-// )}
-
-// {slideIndex < total_slides ? (
-//   <>
-//     {slideIndex === 0 && <MultipleChoiceSlide {...slide1} />}
-//     <NextSlideButton onClick={handleNextSlide} />
-//   </>
-// ) : (<p>No more slides</p>) }
-
-// const slide0 = {
-//   question: "What is the capital of France?",
-//   options: ["Paris", "Berlin", "Madrid", "Rome"],
-// };
-// const slide1 = {
-//   question: "What is the capital of Japan?",
-//   options: ["Tokyo", "Seoul", "Beijing", "Bangkok"],
-// };
-// const slide2 = {
-//   questions: ["Hummus is good", "Bagels are good", "Tall", "Short"],
-// };
-// const slide3 = {
-//   promptText: "Who are your closest friends?",
-//   inlineText: "Write Name",
-// };
-// const slide4 = {
-//   questions: ["Hummus is good", "Bagels are good", "Tall", "Short"],
-// };
-// //const data = [10, 20, 30, 40, 50];

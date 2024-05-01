@@ -1,52 +1,57 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import "./NodeConnect1Slide.css";
+import { SelectionData } from "../SelectionData.js";
 import * as d3 from "d3";
 
 const NodeConnect1Slide = ({
   promptText,
   promptText2,
-  nodeNames,
   updateCurrentSelection,
-  maxNom,
   num_to_exclude,
-  colors,
   id,
 }) => {
   const svgRef = useRef();
   const nodeBoxRef = useRef();
 
   const [ballsData, setBallsData] = useState([]);
+  const { selectionData, setSelectionData } = useContext(SelectionData);
+
 
   // Call addBall when the component mounts
   useEffect(() => {
-    if (nodeNames.reduce(
-      (total, current) => total + current,
-      0
-    ) === -11 || (nodeNames.length <= num_to_exclude && num_to_exclude !== maxNom)) {
-      updateCurrentSelection({ key: id, data: [
-        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-      ] , override:true, nextBlocked:false});
-    } else { 
-      const outputData = Array(maxNom + 1).fill(0);
-        for (let i = 0; i < nodeNames.length; i++) {
-          outputData[i] = 0;
-        }
-        outputData[maxNom] = 0;
-        for (let i = nodeNames.length; i < maxNom; i++) {
-          outputData[i] = null;
-        }
-        outputData[num_to_exclude] = -1;
-        // console.log(outputData);
+    if (selectionData && typeof selectionData === 'object' && selectionData.hasOwnProperty(id) && selectionData[id].reduce((total, current) => total + current, 0) !== -11) {
+      addBall(selectionData[id])
+    }
+    else if (
+      selectionData.all_people.reduce((total, current) => total + current, 0) === -11 ||
+      (selectionData.all_people.length <= num_to_exclude && num_to_exclude !== selectionData.max_nom) 
+    ) {
+      updateCurrentSelection({
+        key: id,
+        data: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
+        override: true,
+        nextBlocked: false,
+      });
+    } else {
+      const outputData = Array(selectionData.max_nom + 1).fill(0);
+      for (let i = selectionData.all_people.length; i < selectionData.max_nom; i++) {
+        outputData[i] = null;
+      }
+      outputData[num_to_exclude] = -1;
 
-        updateCurrentSelection({ key: id, data: outputData, override:false, nextBlocked:true }); // Check if this line is correct
-      addBall();
+      updateCurrentSelection({
+        key: id,
+        data: outputData,
+        override: false,
+        nextBlocked: true,
+      });
+      addBall([]);
     }
   }, []);
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
 
-    // Create circles for each ball
     svg
       .selectAll("circle")
       .data(ballsData)
@@ -55,34 +60,36 @@ const NodeConnect1Slide = ({
       .attr("cx", (d) => d.x)
       .attr("cy", (d) => d.y)
       .attr("r", 20)
-      .attr("fill", (d) => d.color)
+      .attr("fill", (d) => (d.to_exclude ? "black" : d.color))
       .style("z-index", 5) // Set the z-index to place the circles behind text
+      .classed("highlighted", (d) => d.highlighted)
       .on("click", function (e, d) {
-        // Toggle highlight class on click
-        d3.select(this).classed(
-          "highlighted",
-          !d3.select(this).classed("highlighted")
-        );
-        const highlightedCircles = svg.selectAll("circle.highlighted");
-        const highlightedIds = highlightedCircles.data().map((d) => d.id);
-        const outputData = Array(maxNom + 1).fill(0);
-        for (let i = 0; i < nodeNames.length; i++) {
-          outputData[i] = 0;
-        }
-        outputData[maxNom] = 0;
+        if (!d.to_exclude) {
+          d3.select(this).classed(
+            "highlighted",
+            !d3.select(this).classed("highlighted")
+          );
+          const highlightedCircles = svg.selectAll("circle.highlighted");
+          const highlightedIds = highlightedCircles.data().map((d) => d.id);
+          const outputData = Array(selectionData.max_nom + 1).fill(0);
 
-        highlightedIds.forEach((index) => {
-          if (index >= 0 && index < outputData.length) {
-            outputData[index] = 1;
+          highlightedIds.forEach((index) => {
+            if (index >= 0 && index < outputData.length) {
+              outputData[index] = 1;
+            }
+          });
+          for (let i = selectionData.all_people.length; i < selectionData.max_nom; i++) {
+            outputData[i] = null;
           }
-        });
-        for (let i = nodeNames.length; i < maxNom; i++) {
-          outputData[i] = null;
-        }
-        outputData[num_to_exclude] = -1;
-        // console.log(outputData);
+          outputData[num_to_exclude] = -1;
 
-        updateCurrentSelection({ key: id, data: outputData, override:false, nextBlocked:false }); // Check if this line is correct
+          updateCurrentSelection({
+            key: id,
+            data: outputData,
+            override: false,
+            nextBlocked: false,
+          }); // Check if this line is correct
+        }
       });
 
     // Append text inside circles
@@ -93,6 +100,7 @@ const NodeConnect1Slide = ({
       .append("text")
       .attr("x", (d) => d.x)
       .attr("y", (d) => d.y + 33) // Adjust the y-position to place text just below the circle
+      .style("font-weight", (d) => d.to_exclude ? 700 : 300)
       .style("text-anchor", "middle") // Center text horizontally
       .style("dominant-baseline", "middle") // Center text vertically
       .style("pointer-events", "none") // Make text unclickable
@@ -111,7 +119,7 @@ const NodeConnect1Slide = ({
   }, [ballsData]);
 
   // Function to handle adding a new ball
-  const addBall = () => {
+  const addBall = (highlights) => {
     const nodeBoxRect = nodeBoxRef.current.getBoundingClientRect();
     const centerX = nodeBoxRect.width / 2 - 10;
     const centerY = nodeBoxRect.height / 2 - 10;
@@ -121,41 +129,49 @@ const NodeConnect1Slide = ({
         ? nodeBoxRect.height * 0.33
         : nodeBoxRect.width * 0.33;
 
+    const randomOrder = [];
+    for (let num of selectionData.clockwise_name_order) {
+      if (num === selectionData.max_nom || num < selectionData.all_people.length) {
+        randomOrder.push(num);
+      }
+    }
+    // console.log(randomOrder);
     const newBallsData = [];
-    for (let i = 0; i < nodeNames.length; i++) {
-      const angle = (Math.PI * 2 * i) / nodeNames.length; // Calculate the angle for each item
+
+    for (let i = 0; i < randomOrder.length; i++) {
+      const angle = (Math.PI * 2 * i) / (selectionData.all_people.length + 1);
 
       const x = centerX + radius * Math.cos(angle);
       const y = centerY + radius * Math.sin(angle);
 
-      newBallsData.push({
-        x: parseInt(x),
-        y: parseInt(y),
-        color: colors[i],
-        friendName: nodeNames[i],
-        id: i,
-        key: i,
-        edges: [],
-      });
+      if (randomOrder[i] === selectionData.max_nom) {
+        newBallsData.push({
+          x: parseInt(x),
+          y: parseInt(y),
+          color: selectionData.colors[i],
+          friendName: "you",
+          id: randomOrder[i],
+          key: randomOrder[i],
+          edges: [],
+          to_exclude: randomOrder[i] === num_to_exclude,
+          highlighted: highlights[randomOrder[i]] === 1
+        });
+      } else {
+        newBallsData.push({
+          x: parseInt(x),
+          y: parseInt(y),
+          color: selectionData.colors[i],
+          friendName: selectionData.all_people[randomOrder[i]],
+          id: randomOrder[i],
+          key: randomOrder[i],
+          edges: [],
+          to_exclude: randomOrder[i] === num_to_exclude,
+          highlighted: highlights[randomOrder[i]] === 1,
+        });
+      }
     }
 
-    newBallsData.push({
-      x: parseInt(centerX),
-      y: parseInt(centerY),
-      color: colors[maxNom],
-      friendName: "you",
-      id: maxNom,
-      key: maxNom,
-      edges: [],
-    });
-    // console.log(newBallsData, num_to_exclude, maxNom)
-
-    if (num_to_exclude === maxNom) {
-      newBallsData.splice(newBallsData.length - 1, 1)
-    } else {
-      newBallsData.splice(num_to_exclude, 1)
-    }
-    // console.log(newBallsData)
+    // console.log(newBallsData);
     setBallsData(newBallsData);
   };
 

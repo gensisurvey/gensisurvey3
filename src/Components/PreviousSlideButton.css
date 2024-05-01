@@ -1,0 +1,88 @@
+/* NextSlideButton.css */
+.previous-button-wrapper {
+  position: fixed;
+  bottom: 100px;
+  left: 40px;
+
+  text-align: center;
+  width: 100%;
+  max-width: 200px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+
+  /* @media all and (min-width: 900px) {
+    max-width: 1000em;
+  } */
+}
+
+.previous-override-button-y {
+  background-color: #c51120;
+  color: #fff;
+  border: none;
+  width: 60px;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.previous-override-button-y:hover {
+  background-color: #6d0b13;
+}
+
+.previous-override-button-n {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  width: 60px;
+
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.previous-override-button-n:hover {
+  background-color: #0056b3;
+}
+
+.previous-text-override {
+  padding-bottom: 0;
+}
+
+.previous-slide-button-container {
+  position: fixed;
+  bottom: 50px;
+  left: 40px;
+}
+
+.previous-slide-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.previous-slide-button:hover {
+  background-color: #0056b3;
+}
+
+.flash {
+  /* border: 1px solid #ccc;
+  border-radius: 5px;
+  /* background-color: #f9f9f9; 
+  box-shadow: 0 0 5px rgb(238, 29, 186); */
+
+  background-color: #0056b3;
+}
