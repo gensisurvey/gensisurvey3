@@ -34,7 +34,7 @@ const App = () => {
 
   // const DATA_KEYS = [];
   const TOTAL_SLIDES = 24; // added 1 for demographics,
-  const TESTING_MODE = true;
+  const TESTING_MODE = false;
 
   useEffect(() => {
     // localStorage.clear()
@@ -46,7 +46,7 @@ const App = () => {
     const next_data_add = { ...selectionData };
     next_data_add["clockwise_name_order"] = circleOrderClockwise;
     next_data_add['max_nom'] = 10
-    next_data_add['colors'] = generateColors(selectionData.max_nom + 1)
+    next_data_add['colors'] = generateColors(10 + 1)
     setSelectionData(next_data_add);
 
     const storedSlideIndex = localStorage.getItem("slideIndex");
