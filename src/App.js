@@ -55,8 +55,6 @@ const App = () => {
     const prevSlides = localStorage.getItem("nextSlideToBackTo");
     setNextSlideToBackTo(prevSlides ? JSON.parse(prevSlides) : []);
 
-    console.log(prevSlides)
-
   }, []);
 
   useEffect(() => {
@@ -99,7 +97,7 @@ const App = () => {
       console.log(next_data_add);
       console.log(current_slide_index);
     }
-    console.log(next_data_add)
+    // console.log(next_data_add)
     if (option.override) {
       setSlideIndex(slideIndex + 1);
     }
