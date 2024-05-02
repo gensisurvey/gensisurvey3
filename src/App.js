@@ -18,7 +18,7 @@ import LadderImg from "./Images/ladder.jpg";
 import BannerImg from "./Images/cornell_seal_simple_web_black.svg";
 import { generateColors, shuffleArray } from "./Components/Helper.js";
 
-import { collection, addDoc } from "firebase/firestore";
+import { collection, setDoc, addDoc, doc } from "firebase/firestore";
 import { db } from "./config/firestore.js";
 
 import { SelectionData } from "./SelectionData.js";
@@ -34,29 +34,30 @@ const App = () => {
 
   // const DATA_KEYS = [];
   const TOTAL_SLIDES = 24; // added 1 for demographics,
-  const TESTING_MODE = true;
+  const TESTING_MODE = false;
 
   useEffect(() => {
     // localStorage.clear();
+    
+    if (localStorage.getItem("MOUNTED") === null) {
+      localStorage.setItem("MOUNTED", true);
 
-    if (selectionData["FIRST_MOUNT"] === undefined) {
-      const MAX_NOM = 10
-      
-      const values = Array.from(
-        { length: MAX_NOM + 1 },
-        (_, index) => index
-      );
+      const MAX_NOM = 10;
+
+      const values = Array.from({ length: MAX_NOM + 1 }, (_, index) => index);
       const circleOrderClockwise = values.sort(() => Math.random() - 0.5);
 
       const next_data_add = { ...selectionData };
 
-      // console.log("mounted");
       next_data_add["clockwise_name_order"] = circleOrderClockwise;
-      next_data_add["max_nom"] = 10;
+      next_data_add["max_nom"] = MAX_NOM;
       next_data_add["colors"] = generateColors(MAX_NOM + 1);
-      next_data_add["FIRST_MOUNT"] = false;
-      // console.log(next_data_add);
+      next_data_add["PID"] = Date.now();
+
+      console.log('here')
+
       setSelectionData(next_data_add);
+      first_mount_firebase(next_data_add["PID"]);
     }
 
     const storedSlideIndex = localStorage.getItem("slideIndex");
@@ -65,6 +66,7 @@ const App = () => {
     const prevSlides = localStorage.getItem("nextSlideToBackTo");
     setNextSlideToBackTo(prevSlides ? JSON.parse(prevSlides) : []);
   }, []);
+
 
   useEffect(() => {
     // Store slideIndex in local storage on state change
@@ -79,19 +81,34 @@ const App = () => {
     );
   }, [nextSlideToBackTo]);
 
+  const first_mount_firebase = async (date) => {
+    try {
+      await setDoc(doc(db, "Testing", date.toString()), selectionData);
+
+      console.log("Document written with ID: ", date.toString());
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
+
   const add_to_firebase = async (e) => {
     try {
-      const docRef = await addDoc(
-        collection(db, "ParticipantFull"),
+      await setDoc(
+        doc(db, "Testing", selectionData["PID"].toString()),
         selectionData
       );
 
       if (TESTING_MODE) {
         console.log(selectionData);
       }
+      console.log("Document written to with ID: ", selectionData["PID"]);
 
-      console.log("Document written with ID: ", docRef.id);
-      setSubmittedToFirebase(true);
+      if (slideIndex > TOTAL_SLIDES) {
+        setSubmittedToFirebase(true);
+        const next_data_add = { ...selectionData };
+        next_data_add["submitted"] = true;
+        setSelectionData(next_data_add);
+      }
     } catch (error) {
       console.error("Error adding document: ", error);
     }
@@ -141,6 +158,8 @@ const App = () => {
         setNextSlideToBackTo(nextPrevious);
       }
       setSlideIndex(slideIndex + 1);
+
+      add_to_firebase()
     }
   };
 
@@ -171,11 +190,6 @@ const App = () => {
     <div className="app-box">
       <Banner logo={BannerImg} text={"Cornell University"} />
       <TheSlide>
-        {/* <NodeSelectionSlide
-        nodeNames={["1", "2", "3", "4", "5"]}
-        updateCurrentSelection ={updateCurrentSelection}
-        >
-        </NodeSelectionSlide> */}
         {slideIndex <= TOTAL_SLIDES ? (
           <>
             {/* =====================================================
@@ -183,7 +197,6 @@ const App = () => {
           Consent
           
           =====================================================*/}
-
             {slideIndex === -1 && (
               <MultipleChoiceSlide
                 question={"Do you consent to participating in this study?"}
@@ -688,16 +701,6 @@ const App = () => {
           
           =====================================================*/}
             {slideIndex === 24 && (
-              // <NodeInputSlide
-              //   promptText="Thank you for completing the mockup."
-              //   promptText2="Please add any kind of feedback"
-              //   maxNom={100}
-              //   inlineText="Write name"
-              //   updateCurrentSelection={updateCurrentSelection}
-              //   key={"survey_feedback"}
-              //   id={"survey_feedback"}
-              //   include_svg={false}
-              // />
               <OpenInput
                 question={
                   "Thank you for completing the mockup. Please add any kind of feedback."
@@ -719,7 +722,9 @@ const App = () => {
         ) : (
           <>
             <p style={{ marginLeft: 30 }}>All slides have been completed.</p>
-            {submittedToFirebase || selectionData["consent"] !== "yes" ? (
+            {submittedToFirebase ||
+            selectionData["consent"] !== "yes" ||
+            selectionData["submitted"] !== undefined ? (
               <p style={{ marginLeft: 30 }}>
                 Thank you, you can close the tab now
               </p>

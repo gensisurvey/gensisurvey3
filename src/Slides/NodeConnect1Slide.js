@@ -33,6 +33,7 @@ const NodeConnect1Slide = ({
         nextBlocked: false,
       });
     } else {
+      console.log(selectionData.all_people.length, selectionData.max_nom)
       const outputData = Array(selectionData.max_nom + 1).fill(0);
       for (let i = selectionData.all_people.length; i < selectionData.max_nom; i++) {
         outputData[i] = null;
@@ -120,7 +121,7 @@ const NodeConnect1Slide = ({
 
   // Function to handle adding a new ball
   const addBall = (highlights) => {
-    console.log("in add ball")
+    // console.log("in add ball")
 
     const nodeBoxRect = nodeBoxRef.current.getBoundingClientRect();
     const centerX = nodeBoxRect.width / 2 - 10;
@@ -137,7 +138,7 @@ const NodeConnect1Slide = ({
         randomOrder.push(num);
       }
     }
-    console.log(randomOrder, selectionData.clockwise_name_order, selectionData.max_nom, selectionData.all_people, selectionData.colors);
+    // console.log(randomOrder, selectionData.clockwise_name_order, selectionData.max_nom, selectionData.all_people, selectionData.colors);
     const newBallsData = [];
 
     for (let i = 0; i < randomOrder.length; i++) {
