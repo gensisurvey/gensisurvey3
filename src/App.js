@@ -12,13 +12,11 @@ import PreviousSlideButton from "./Components/PreviousSlideButton.js";
 import Banner from "./Components/Banner.js";
 import TheSlide from "./Components/TheSlide.js";
 
-// import NodeSelectionSlide from "./Archive/NodeSelectionSlide.js"
-
 import LadderImg from "./Images/ladder.jpg";
 import BannerImg from "./Images/cornell_seal_simple_web_black.svg";
-import { generateColors, shuffleArray } from "./Components/Helper.js";
+import { generateColors } from "./Components/Helper.js";
 
-import { collection, setDoc, addDoc, doc } from "firebase/firestore";
+import { setDoc, doc } from "firebase/firestore";
 import { db } from "./config/firestore.js";
 
 import { SelectionData } from "./SelectionData.js";
@@ -27,22 +25,23 @@ import "./App.css";
 const App = () => {
   const { selectionData, setSelectionData } = useContext(SelectionData);
   const [slideIndex, setSlideIndex] = useState(-1);
+  const [nextSlideToBackTo, setNextSlideToBackTo] = useState([]);
+
   const [currentSelection, setCurrentSelection] = useState(null);
   const [nextBlocked, setNextBlocked] = useState(false);
   const [submittedToFirebase, setSubmittedToFirebase] = useState(false);
-  const [nextSlideToBackTo, setNextSlideToBackTo] = useState([]);
 
-  // const DATA_KEYS = [];
   const TOTAL_SLIDES = 24; // added 1 for demographics,
   const TESTING_MODE = false;
+  const MAX_NOM = 10;
+  const FIREBASE_DB_NAME = "Testing";
 
+  // Runs on website launch
   useEffect(() => {
     // localStorage.clear();
     
     if (localStorage.getItem("MOUNTED") === null) {
       localStorage.setItem("MOUNTED", true);
-
-      const MAX_NOM = 10;
 
       const values = Array.from({ length: MAX_NOM + 1 }, (_, index) => index);
       const circleOrderClockwise = values.sort(() => Math.random() - 0.5);
@@ -53,8 +52,6 @@ const App = () => {
       next_data_add["max_nom"] = MAX_NOM;
       next_data_add["colors"] = generateColors(MAX_NOM + 1);
       next_data_add["PID"] = Date.now();
-
-      console.log('here')
 
       setSelectionData(next_data_add);
       first_mount_firebase(next_data_add["PID"]);
@@ -67,23 +64,23 @@ const App = () => {
     setNextSlideToBackTo(prevSlides ? JSON.parse(prevSlides) : []);
   }, []);
 
-
+  // Store slideIndex in local storage on state change
   useEffect(() => {
-    // Store slideIndex in local storage on state change
     localStorage.setItem("slideIndex", slideIndex.toString());
   }, [slideIndex]);
 
+  // Store slideIndex in local storage on state change
   useEffect(() => {
-    // Store slideIndex in local storage on state change
     localStorage.setItem(
       "nextSlideToBackTo",
       JSON.stringify(nextSlideToBackTo)
     );
   }, [nextSlideToBackTo]);
 
+  // on first mount, creates the PID in firebase for future storagr
   const first_mount_firebase = async (date) => {
     try {
-      await setDoc(doc(db, "Testing", date.toString()), selectionData);
+      await setDoc(doc(db, FIREBASE_DB_NAME, date.toString()), selectionData);
 
       console.log("Document written with ID: ", date.toString());
     } catch (error) {
@@ -91,10 +88,11 @@ const App = () => {
     }
   };
 
+  // updates current PID with new information whenever called 
   const add_to_firebase = async (e) => {
     try {
       await setDoc(
-        doc(db, "Testing", selectionData["PID"].toString()),
+        doc(db, FIREBASE_DB_NAME, selectionData["PID"].toString()),
         selectionData
       );
 
@@ -103,6 +101,7 @@ const App = () => {
       }
       console.log("Document written to with ID: ", selectionData["PID"]);
 
+      // sets submitted final when the final slide is reached
       if (slideIndex > TOTAL_SLIDES) {
         setSubmittedToFirebase(true);
         const next_data_add = { ...selectionData };
@@ -140,21 +139,25 @@ const App = () => {
       console.log(currentSelection);
     }
 
+    // if there is no input, go to last slide 
     if (slideIndex === -1 && currentSelection.data === null) {
       setSlideIndex(TOTAL_SLIDES);
       setSubmittedToFirebase(true);
+    // if user does not consent, go to last slide 
     } else if (slideIndex === -1 && currentSelection.data === "no") {
       setSlideIndex(TOTAL_SLIDES);
       setSubmittedToFirebase(true);
+    // if the state of current slide is to not allow user to move forward, bring up override screen
     } else if (currentSelection.nextBlocked) {
       setNextBlocked(true);
+    // the user can move forward, state needs to be updated, next blocked needs to be removed
     } else {
       setNextBlocked(false);
 
+      // setting next slide to back to order for previous slide 
       if (slideIndex >= 0) {
         const nextPrevious = [...nextSlideToBackTo];
         nextPrevious.push(slideIndex);
-        // console.log(nextPrevious)
         setNextSlideToBackTo(nextPrevious);
       }
       setSlideIndex(slideIndex + 1);
@@ -163,6 +166,7 @@ const App = () => {
     }
   };
 
+  // overrides next blocked, used if yes is clicked on override screen 
   const nextBlockOverride = (tf) => {
     setNextBlocked(false);
     if (tf) {
@@ -175,11 +179,11 @@ const App = () => {
     }
   };
 
+  // logic for going to previous slide 
   const goBackSlide = () => {
     if (slideIndex > 0) {
       const nextPrevious = [...nextSlideToBackTo];
       const previous = nextPrevious.pop(slideIndex);
-      // console.log(nextPrevious)
 
       setSlideIndex(previous);
       setNextSlideToBackTo(nextPrevious);
