@@ -211,244 +211,243 @@ const App = () => {
               />
             )}
 
-            {/* =====================================================
+  {/* =====================================================
           
           Slides for inputing names into different categories 
           
           =====================================================*/}
-            {slideIndex === 0 && (
-              <NodeInputSlide
-                promptText="TEST_AI: Some of your peers may be a safe person for you to turn to, during challenging, threatening, or uncertain times."
-                promptText2="Think about any individuals who are a safe person for you to turn to when you are having a bad day or had a negative experience. Please nominate each person who comes to mind. Type in the first name of each person."
-                specialInstructions="NOTE: Please add initials to duplicate names, the bar will flash if a duplicate is detected"
-                inlineText="Write name"
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people"}
-                id={"all_people"}
-                include_svg={false}
-              />
-            )}
-            {/* =====================================================
-          
-          Slides for asking which of the nominated will turn to you 
-          
-          =====================================================*/}
-            {slideIndex === 1 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you <b>you</b> turn to as a
-                    safe person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={selectionData.max_nom}
-                nodeNames={selectionData.all_people}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_you"}
-                id={"all_people_turn_to_you"}
-              />
-            )}
+          {slideIndex === 0 && (
+            <NodeInputSlide
+              promptText="Some of your peers may be a safe person for you to turn to, during challenging, threatening, or uncertain times."
+              promptText2="Think about any individuals you would be willing to turn to when you are having a bad day or had a negative experience. Please nominate each person who comes to mind. Type in the first name of each person."
+              specialInstructions="NOTE: Please add initials to duplicate names, the bar will flash if a duplicate is detected"
+              inlineText="Write name"
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people"}
+              id={"all_people"}
+              include_svg={false}
+            />
+          )}
+          {/* =====================================================
+        
+        Slides for asking which of the nominated would be willing to turn to you 
+        
+        =====================================================*/}
+          {slideIndex === 1 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals would be willing to turn to <b>you</b> as a
+                  safe person when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={selectionData.max_nom}
+              nodeNames={selectionData.all_people}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_you"}
+              id={"all_people_turn_to_you"}
+            />
+          )}
 
-            {/* =====================================================
-          
-          Slides asking who your friends turn to
-          
-          =====================================================*/}
+          {/* =====================================================
+        
+        Slides asking who your friends would be willing to turn to
+        
+        =====================================================*/}
 
-            {slideIndex === 2 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[0]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={0}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_0"}
-                id={"all_people_turn_to_0"}
-              />
-            )}
-            {slideIndex === 3 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[1]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={1}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_1"}
-                id={"all_people_turn_to_1"}
-              />
-            )}
-            {slideIndex === 4 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[2]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={2}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_2"}
-                id={"all_people_turn_to_2"}
-              />
-            )}
-            {slideIndex === 5 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[3]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={3}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_3"}
-                id={"all_people_turn_to_3"}
-              />
-            )}
-            {slideIndex === 6 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[4]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={4}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_4"}
-                id={"all_people_turn_to_4"}
-              />
-            )}
-            {slideIndex === 7 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[5]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={5}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_5"}
-                id={"all_people_turn_to_5"}
-              />
-            )}
-            {slideIndex === 8 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[6]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={6}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_6"}
-                id={"all_people_turn_to_6"}
-              />
-            )}
-            {slideIndex === 9 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[7]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={7}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_7"}
-                id={"all_people_turn_to_7"}
-              />
-            )}
-            {slideIndex === 10 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[8]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={8}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_8"}
-                id={"all_people_turn_to_8"}
-              />
-            )}
-            {slideIndex === 11 && (
-              <NodeConnect1Slide
-                promptText={
-                  "These are the individual(s) you nominated as a safe person for you to turn to when you are having a bad day or had a negative experience."
-                }
-                promptText2={
-                  <span>
-                    Which of these individuals do you think{" "}
-                    <b>{selectionData.all_people[9]}</b> turns to as a safe
-                    person when they are having a bad day or had a negative
-                    experience?
-                  </span>
-                }
-                num_to_exclude={9}
-                updateCurrentSelection={updateCurrentSelection}
-                key={"all_people_turn_to_9"}
-                id={"all_people_turn_to_9"}
-              />
-            )}
+          {slideIndex === 2 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[0]}</b> would be willing to turn to
+                  when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={0}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_0"}
+              id={"all_people_turn_to_0"}
+            />
+          )}
+          {slideIndex === 3 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[1]}</b> would be willing to turn to
+                  when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={1}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_1"}
+              id={"all_people_turn_to_1"}
+            />
+          )}
+          {slideIndex === 4 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[2]}</b> would be willing to turn to
+                  when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={2}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_2"}
+              id={"all_people_turn_to_2"}
+            />
+          )}
+          {slideIndex === 5 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[3]}</b> would be willing to turn to
+                  when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={3}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_3"}
+              id={"all_people_turn_to_3"}
+            />
+          )}
+          {slideIndex === 6 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[4]}</b> would be willing to turn to
+                  when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={4}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_4"}
+              id={"all_people_turn_to_4"}
+            />
+          )}
+          {slideIndex === 7 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[5]}</b> twould be willing to turn to
+                  when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={5}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_5"}
+              id={"all_people_turn_to_5"}
+            />
+          )}
+          {slideIndex === 8 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[6]}</b> would be willing to turn to when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={6}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_6"}
+              id={"all_people_turn_to_6"}
+            />
+          )}
+          {slideIndex === 9 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[7]}</b> would be willing to turn to
+                  when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={7}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_7"}
+              id={"all_people_turn_to_7"}
+            />
+          )}
+          {slideIndex === 10 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[8]}</b> would be willing to turn to
+                  when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={8}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_8"}
+              id={"all_people_turn_to_8"}
+            />
+          )}
+          {slideIndex === 11 && (
+            <NodeConnect1Slide
+              promptText={
+                "These are the individual(s) you nominated as a person you would be willing to turn to when you are having a bad day or had a negative experience."
+              }
+              promptText2={
+                <span>
+                  Which of these individuals do you think{" "}
+                  <b>{selectionData.all_people[9]}</b> would be willing to turn to
+                  when they are having a bad day or had a negative
+                  experience?
+                </span>
+              }
+              num_to_exclude={9}
+              updateCurrentSelection={updateCurrentSelection}
+              key={"all_people_turn_to_9"}
+              id={"all_people_turn_to_9"}
+            />
+          )}
 
             {/* =====================================================
           
